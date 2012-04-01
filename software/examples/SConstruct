@@ -79,7 +79,7 @@ app = GetOption('app')
 if GetOption('type') == 'ext':
     linkflags = rtconfig.LFLAGS + ' -e 0'
 else:
-    linkflags = rtconfig.LFLAGS + ' -e main'
+    linkflags = rtconfig.LFLAGS + ' -e main -larduino'
 
 sconstruct = File('SConstruct')
 fn = sconstruct.rfile()
@@ -87,27 +87,30 @@ name = fn.name
 building_dir = os.path.dirname(fn.abspath)
 
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
-	CXX = rtconfig.CXX, AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = linkflags,
-	CPPPATH = [os.path.join(building_dir, '..'), 
-		RTT_ROOT + '/include',
-		RTT_ROOT + '/components/finsh',
-		RTT_ROOT + '/components/dfs', 
-		RTT_ROOT + '/components/dfs/include',
-		RTT_ROOT + '/components/libc/newlib',
-		])
+        AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        CXX = rtconfig.CXX, AR = rtconfig.AR, ARFLAGS = '-rc',
+        LINK = rtconfig.LINK, LINKFLAGS = linkflags,
+        LIBPATH = [os.path.join(building_dir, '..', 'libraries')],
+        CPPPATH = [os.path.join(building_dir, '..', 'platform'), 
+                os.path.join(building_dir, '..', 'libraries'), 
+                os.path.join(building_dir, '..', 'libraries', 'arduino'), 
+                RTT_ROOT + '/include',
+                RTT_ROOT + '/components/finsh',
+                RTT_ROOT + '/components/dfs', 
+                RTT_ROOT + '/components/dfs/include',
+                RTT_ROOT + '/components/libc/newlib',
+                ])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 env.Append(BUILDERS = {'Processing':Builder(action = fnProcessing,
-	suffix = '.cpp', src_suffix = '.pde')})
+        suffix = '.cpp', src_suffix = '.pde')})
 Export('env')
 
 PrepareModuleBuilding(env, RTT_ROOT)
 
 objs = SConscript(app + '/Sconscript')
-TARGET = os.path.join(building_dir, 'root', app + '.' + rtconfig.TARGET_EXT)
+TARGET = os.path.join(building_dir, '..', 'root', app + '.' + rtconfig.TARGET_EXT)
 
 # build program 
 env.Program(TARGET, objs)
