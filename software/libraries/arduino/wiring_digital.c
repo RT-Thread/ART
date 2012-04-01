@@ -30,6 +30,7 @@
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
+#if 0 // bernard.xiong
 	uint8_t bit = digitalPinToBitMask(pin);
 	uint8_t port = digitalPinToPort(pin);
 	volatile uint8_t *reg;
@@ -41,7 +42,7 @@ void pinMode(uint8_t pin, uint8_t mode)
 
 	if (mode == INPUT) { 
 		uint8_t oldSREG = SREG;
-                cli();
+        cli();
 		*reg &= ~bit;
 		SREG = oldSREG;
 	} else {
@@ -50,6 +51,7 @@ void pinMode(uint8_t pin, uint8_t mode)
 		*reg |= bit;
 		SREG = oldSREG;
 	}
+#endif
 }
 
 // Forcing this inline keeps the callers from having to push their own stuff
@@ -68,6 +70,7 @@ void pinMode(uint8_t pin, uint8_t mode)
 //static inline void turnOffPWM(uint8_t timer)
 static void turnOffPWM(uint8_t timer)
 {
+#if 0 // bernard.xoing 
 	switch (timer)
 	{
 		#if defined(TCCR1A) && defined(COM1A1)
@@ -120,10 +123,12 @@ static void turnOffPWM(uint8_t timer)
 		case  TIMER5C:  cbi(TCCR5A, COM5C1);    break;
 		#endif
 	}
+#endif
 }
 
 void digitalWrite(uint8_t pin, uint8_t val)
 {
+#if 0 // bernard.xiong
 	uint8_t timer = digitalPinToTimer(pin);
 	uint8_t bit = digitalPinToBitMask(pin);
 	uint8_t port = digitalPinToPort(pin);
@@ -147,10 +152,12 @@ void digitalWrite(uint8_t pin, uint8_t val)
 	}
 
 	SREG = oldSREG;
+#endif 
 }
 
 int digitalRead(uint8_t pin)
 {
+#if 0 // bernard.xoing
 	uint8_t timer = digitalPinToTimer(pin);
 	uint8_t bit = digitalPinToBitMask(pin);
 	uint8_t port = digitalPinToPort(pin);
@@ -163,4 +170,7 @@ int digitalRead(uint8_t pin)
 
 	if (*portInputRegister(port) & bit) return HIGH;
 	return LOW;
+#else
+	return LOW;
+#endif
 }

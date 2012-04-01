@@ -1,13 +1,14 @@
 #include <new.h>
+#include <rtthread.h>
 
 void * operator new(size_t size)
 {
-  return malloc(size);
+  return rt_malloc(size);
 }
 
 void operator delete(void * ptr)
 {
-  free(ptr);
+  rt_free(ptr);
 } 
 
 int __cxa_guard_acquire(__guard *g) {return !*(char *)(g);};

@@ -25,7 +25,7 @@
 */
 
 #include "wiring_private.h"
-#include "pins_arduino.h"
+// #include "pins_arduino.h" // bernard.xiong
 
 uint8_t analog_reference = DEFAULT;
 
@@ -113,6 +113,7 @@ void analogWrite(uint8_t pin, int val)
 	}
 	else
 	{
+#if 0 // bernard.xiong
 		switch(digitalPinToTimer(pin))
 		{
 			// XXX fix needed for atmega8
@@ -268,5 +269,6 @@ void analogWrite(uint8_t pin, int val)
 					digitalWrite(pin, HIGH);
 				}
 		}
+#endif
 	}
 }

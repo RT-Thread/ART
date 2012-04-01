@@ -41,6 +41,7 @@ volatile unsigned long timer0_overflow_count = 0;
 volatile unsigned long timer0_millis = 0;
 static unsigned char timer0_fract = 0;
 
+#if 0
 #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__)
 SIGNAL(TIM0_OVF_vect)
 #else
@@ -63,9 +64,11 @@ SIGNAL(TIMER0_OVF_vect)
 	timer0_millis = m;
 	timer0_overflow_count++;
 }
+#endif
 
 unsigned long millis()
 {
+#if 0 // bernard.xiong
 	unsigned long m;
 	uint8_t oldSREG = SREG;
 
@@ -76,9 +79,13 @@ unsigned long millis()
 	SREG = oldSREG;
 
 	return m;
+#else
+	return 0;
+#endif
 }
 
 unsigned long micros() {
+#if 0 // bernard.xiong
 	unsigned long m;
 	uint8_t oldSREG = SREG, t;
 	
@@ -104,6 +111,9 @@ unsigned long micros() {
 	SREG = oldSREG;
 	
 	return ((m << 8) + t) * (64 / clockCyclesPerMicrosecond());
+#else
+	return 0;
+#endif
 }
 
 void delay(unsigned long ms)
@@ -121,6 +131,7 @@ void delay(unsigned long ms)
 /* Delay for the given number of microseconds.  Assumes a 8 or 16 MHz clock. */
 void delayMicroseconds(unsigned int us)
 {
+#if 0 // bernard.xiong
 	// calling avrlib's delay_us() function with low values (e.g. 1 or
 	// 2 microseconds) gives delays longer than desired.
 	//delay_us(us);
@@ -166,10 +177,12 @@ void delayMicroseconds(unsigned int us)
 		"1: sbiw %0,1" "\n\t" // 2 cycles
 		"brne 1b" : "=w" (us) : "0" (us) // 2 cycles
 	);
+#endif
 }
 
 void init()
 {
+#if 0 // bernard.xiong
 	// this needs to be called before setup() or some functions won't
 	// work there
 	sei();
@@ -293,5 +306,6 @@ void init()
 	UCSRB = 0;
 #elif defined(UCSR0B)
 	UCSR0B = 0;
+#endif
 #endif
 }

@@ -38,7 +38,7 @@ size_t Print::write(const uint8_t *buffer, size_t size)
   }
   return n;
 }
-
+#if 0
 size_t Print::print(const __FlashStringHelper *ifsh)
 {
   const prog_char *p = (const prog_char *)ifsh;
@@ -50,7 +50,7 @@ size_t Print::print(const __FlashStringHelper *ifsh)
   }
   return n;
 }
-
+#endif
 size_t Print::print(const String &s)
 {
   size_t n = 0;
@@ -111,14 +111,14 @@ size_t Print::print(double n, int digits)
 {
   return printFloat(n, digits);
 }
-
+#if 0
 size_t Print::println(const __FlashStringHelper *ifsh)
 {
   size_t n = print(ifsh);
   n += println();
   return n;
 }
-
+#endif
 size_t Print::print(const Printable& x)
 {
   return x.printTo(*this);

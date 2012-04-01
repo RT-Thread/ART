@@ -30,7 +30,7 @@ extern "C" {
 void randomSeed(unsigned int seed)
 {
   if (seed != 0) {
-    srandom(seed);
+    srand(seed); // bernard.xiong
   }
 }
 
@@ -39,7 +39,8 @@ long random(long howbig)
   if (howbig == 0) {
     return 0;
   }
-  return random() % howbig;
+  // return random() % howbig; bernard.xiong
+  return rand() % howbig;
 }
 
 long random(long howsmall, long howbig)

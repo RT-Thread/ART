@@ -36,6 +36,7 @@ volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
 // volatile static voidFuncPtr twiIntFunc;
 
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
+#if 0 // bernard.xiong
   if(interruptNum < EXTERNAL_NUM_INTERRUPTS) {
     intFunc[interruptNum] = userFunc;
     
@@ -113,9 +114,11 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
 #endif
     }
   }
+#endif
 }
 
 void detachInterrupt(uint8_t interruptNum) {
+#if 0 // bernard.xiong
   if(interruptNum < EXTERNAL_NUM_INTERRUPTS) {
     // Disable the interrupt.  (We can't assume that interruptNum is equal
     // to the number of the EIMSK bit to clear, as this isn't true on the 
@@ -175,6 +178,7 @@ void detachInterrupt(uint8_t interruptNum) {
       
     intFunc[interruptNum] = 0;
   }
+#endif
 }
 
 /*
@@ -227,6 +231,7 @@ SIGNAL(INT7_vect) {
 
 #else
 
+#if 0 // bernard.xiong
 SIGNAL(INT0_vect) {
   if(intFunc[EXTERNAL_INT_0])
     intFunc[EXTERNAL_INT_0]();
@@ -236,6 +241,7 @@ SIGNAL(INT1_vect) {
   if(intFunc[EXTERNAL_INT_1])
     intFunc[EXTERNAL_INT_1]();
 }
+#endif
 
 #endif
 
