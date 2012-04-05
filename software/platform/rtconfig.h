@@ -79,9 +79,9 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+#define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-// #define RT_USING_PTHREADS
+#define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
@@ -106,7 +106,7 @@
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
 // #define RT_USING_DFS_UFFS
 // <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
-// #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="true" />
 #define RT_USING_DFS_ROMFS
 // </section>

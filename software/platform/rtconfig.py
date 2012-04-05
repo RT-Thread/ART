@@ -6,10 +6,10 @@ CPU='cortex-m4'
 CROSS_TOOL='gcc'
 
 PLATFORM 	= 'gcc'
-EXEC_PATH 	= 'D:\\pxxiong\\Tools\\RDT\\eclipse\\arm\\bin\\'
+EXEC_PATH 	= 'D:/pxxiong/Tools/RDT/eclipse/arm/bin/'
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 STM32_TYPE = 'STM32F4XX'
