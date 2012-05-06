@@ -1,0 +1,1 @@
+printf("init.rc for RT-Thread\n");
