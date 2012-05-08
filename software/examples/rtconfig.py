@@ -1,8 +1,13 @@
+import os
+
 # bsp name
 BSP = 'stm32f40x'
 
 # toolchains
-EXEC_PATH 	= 'D:/pxxiong/Tools/RDT/eclipse/arm/bin'
+EXEC_PATH = 'D:/pxxiong/Tools/RDT/eclipse/arm/bin'
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
 PREFIX = 'arm-none-eabi-'
 CC = PREFIX + 'gcc'
 CXX = PREFIX + 'g++'

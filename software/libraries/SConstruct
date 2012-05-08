@@ -32,7 +32,7 @@ Export('env')
 
 PrepareModuleBuilding(env, RTT_ROOT)
 
-objs = SConscript('arduino/Sconscript')
+objs = SConscript('arduino/SConscript')
 TARGET = 'arduino'
 
 # build program 

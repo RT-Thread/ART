@@ -111,7 +111,7 @@ Export('env')
 
 PrepareModuleBuilding(env, RTT_ROOT)
 
-objs = SConscript(app + '/Sconscript')
+objs = SConscript(os.path.join(app, 'Sconscript'))
 TARGET = os.path.join('root', app + '.' + rtconfig.TARGET_EXT)
 
 # build program 
