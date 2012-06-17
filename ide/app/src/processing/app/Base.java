@@ -1544,7 +1544,16 @@ public class Base {
     }
     return path;
   }
-  
+
+  static public String getArmBasePath() {
+    String path = getHardwarePath() + File.separator + "tools" +
+                  File.separator + "arm" + File.separator + "bin" + File.separator;
+    if (Base.isLinux() && !(new File(path)).exists()) {
+      return "";  // use distribution provided arm tools if bundled tools missing
+    }
+    return path;
+  }
+
   
   static public Target getTarget() {
     return Base.targetsTable.get(Preferences.get("target"));

@@ -42,13 +42,13 @@ public class Sizer implements MessageConsumer {
   }
   
   public long computeSize() throws RunnerException {
-    String avrBasePath = Base.getAvrBasePath();
+    String toolchainBasePath = Base.getArmBasePath();
     String commandSize[] = new String[] {
-      avrBasePath + "avr-size",
+      toolchainBasePath + "arm-none-eabi-size",
       " "
     };
     
-    commandSize[1] = buildPath + File.separator + sketchName + ".hex";
+    commandSize[1] = buildPath + File.separator + sketchName + ".mo";
 
     int r = 0;
     try {

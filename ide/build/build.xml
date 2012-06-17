@@ -77,21 +77,6 @@
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
     
-    <!-- copy shared tools folder -->
-    <copy todir="${target.path}/tools">
-      <fileset dir="shared/tools" />
-    </copy>
-    
-    <!-- copy library folder -->
-    <copy todir="${target.path}/libraries">
-      <fileset dir="../libraries" />
-    </copy>
-    
-    <!-- copy hardware folder -->
-    <copy todir="${target.path}/hardware">
-      <fileset dir="../hardware" />
-    </copy>
-    
     <!-- copy shared examples folder -->
     <copy todir="${target.path}/examples">
       <fileset dir="shared/examples" />
@@ -482,13 +467,6 @@
       <fileset dir="windows/dist" includes="drivers/**" />
     </copy>
     
-    <!-- Unzip AVR tools -->
-    <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
-
-    <copy todir="windows/work/hardware/tools/avr/avr/include/avr">
-      <fileset file="windows/eeprom.h" />
-    </copy>
-
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
