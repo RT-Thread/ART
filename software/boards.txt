@@ -1,0 +1,18 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+##############################################################
+
+art.name=ART board
+art.upload.protocol=arduino
+art.upload.maximum_size=32256
+art.upload.speed=115200
+art.bootloader.low_fuses=0xff
+art.bootloader.high_fuses=0xde
+art.bootloader.extended_fuses=0x05
+art.bootloader.path=optiboot
+art.bootloader.file=optiboot_atmega328.hex
+art.bootloader.unlock_bits=0x3F
+art.bootloader.lock_bits=0x0F
+art.build.mcu=cortex-m4
+art.build.f_cpu=16000000L
+art.build.core=arduino
