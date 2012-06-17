@@ -1,0 +1,7 @@
+Directory description
+---------------------
+
+examples  -- some examples for arduino like program or the native program. 
+libraries -- implementation of arduino APIs.
+platform  -- platform program of ART, which is the RT-Thread RTOS kernel.
+rt-thread -- RT-Thread RTOS directory.
