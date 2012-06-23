@@ -48,4 +48,7 @@ void rt_hw_board_init(void);
 
 void rt_hw_usart_init(void);
 
+rt_uint32_t rt_hw_tick_get_microsecond(void);
+rt_uint32_t rt_hw_tick_get_millisecond(void);
+
 #endif

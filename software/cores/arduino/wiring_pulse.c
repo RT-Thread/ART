@@ -31,43 +31,22 @@
  * before the start of the pulse. */
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
 {
-#if 0 // bernard.xiong
-	// cache the port and bit of the pin in order to speed up the
-	// pulse width measuring loop and achieve finer resolution.  calling
-	// digitalRead() instead yields much coarser resolution.
-	uint8_t bit = digitalPinToBitMask(pin);
-	uint8_t port = digitalPinToPort(pin);
-	uint8_t stateMask = (state ? bit : 0);
-	unsigned long width = 0; // keep initialization out of time critical area
-	
-	// convert the timeout from microseconds to a number of times through
-	// the initial loop; it takes 16 clock cycles per iteration.
-	unsigned long numloops = 0;
-	unsigned long maxloops = microsecondsToClockCycles(timeout) / 16;
-	
-	// wait for any previous pulse to end
-	while ((*portInputRegister(port) & bit) == stateMask)
-		if (numloops++ == maxloops)
-			return 0;
-	
-	// wait for the pulse to start
-	while ((*portInputRegister(port) & bit) != stateMask)
-		if (numloops++ == maxloops)
-			return 0;
-	
-	// wait for the pulse to stop
-	while ((*portInputRegister(port) & bit) == stateMask) {
-		if (numloops++ == maxloops)
-			return 0;
-		width++;
+	rt_uint32_t begin_tick;
+	rt_uint32_t current_tick;
+
+	while (digitalRead(pin) == state) ;
+
+	begin_tick = current_tick = micros();
+	timeout = begin_tick + timeout;
+	while (current_tick < timeout)
+	{
+		if (digitalRead(pin) != state)
+		{
+			return current_tick - begin_tick;
+			break;
+		}
+		current_tick = micros();
 	}
 
-	// convert the reading to microseconds. The loop has been determined
-	// to be 20 clock cycles long and have about 16 clocks between the edge
-	// and the start of the loop. There will be some error introduced by
-	// the interrupt handlers.
-	return clockCyclesToMicroseconds(width * 21 + 16); 
-#else
 	return 0;
-#endif
 }

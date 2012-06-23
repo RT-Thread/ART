@@ -25,8 +25,6 @@
 #ifndef WiringPrivate_h
 #define WiringPrivate_h
 
-// #include <avr/io.h>
-// #include <avr/interrupt.h>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -34,13 +32,6 @@
 
 #ifdef __cplusplus
 extern "C"{
-#endif
-
-#ifndef cbi
-#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
-#endif
-#ifndef sbi
-#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
 #define EXTERNAL_INT_0 0
@@ -51,12 +42,7 @@ extern "C"{
 #define EXTERNAL_INT_5 5
 #define EXTERNAL_INT_6 6
 #define EXTERNAL_INT_7 7
-
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 #define EXTERNAL_NUM_INTERRUPTS 8
-#else
-#define EXTERNAL_NUM_INTERRUPTS 2
-#endif
 
 typedef void (*voidFuncPtr)(void);
 

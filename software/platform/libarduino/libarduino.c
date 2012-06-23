@@ -14,7 +14,7 @@ struct pin_index
 
 #define ITEM_NUM(items)	sizeof(items)/sizeof(items[0])
 
-const static struct pin_index pins[] =
+struct pin_index pins[] =
 {
 	{ 0, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_7},
 	{ 1, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_6},
@@ -24,12 +24,55 @@ const static struct pin_index pins[] =
 	{ 5, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_13},
 	{ 6, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_11},
 	{ 7, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_9},
+
 	{ 8, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_12},
 	{ 9, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_13},
 	{10, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_14},
 	{11, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_15},
 	{12, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_6},
 	{13, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_5},
+
+	{14, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_8},
+	{15, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_9},
+	{16, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_5},
+	{17, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_6},
+	{18, RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_6},
+	{19, RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_7},
+	{20, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_9},
+	{21, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_8},
+
+	{22, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_12},
+	{23, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_2},
+	{24, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_1},
+	{25, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_0},
+	{26, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_9},
+	{27, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_13},
+	{28, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_15},
+	{29, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_12},
+	{30, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_10},
+	{31, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_8},
+	{32, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_7},
+	{33, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_4},
+	{34, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_3},
+	{35, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_2},
+	{36, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_1},
+	{37, RCC_AHB1Periph_GPIOE, GPIOE, GPIO_Pin_0},
+	{38, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_11},
+	{39, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_10},
+	{40, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_7},
+	{41, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_3},
+	{42, RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_4},
+	{43, RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_8},
+	{44, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_15},
+	{45, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_14},
+	{46, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_11},
+	{47, RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_5},
+	{48, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_10},
+	{49, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_15},
+	{50, RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_4},
+	{51, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_7},
+	{52, RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_3},
+	{53, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_4},
 };
 
 void pinMode(uint8_t pin, uint8_t mode)
@@ -97,6 +140,40 @@ int digitalRead(uint8_t pin)
 }
 FINSH_FUNCTION_EXPORT(digitalRead, read value from digital pin);
 
+volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
+
+static void defaultIsrHandler(void)
+{
+	rt_kprintf("Unknow ISR\n");
+}
+
+void initInterrupt(void)
+{
+	rt_uint32_t index;
+
+	for (index = 0; index < EXTERNAL_NUM_INTERRUPTS; index ++)
+	{
+		intFunc[index] = defaultIsrHandler;
+	}
+}
+
+void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
+	if (interruptNum < EXTERNAL_NUM_INTERRUPTS)
+	{
+		intFunc[interruptNum] = userFunc;
+	}
+}
+
+void detachInterrupt(uint8_t interruptNum) {
+	if (interruptNum < EXTERNAL_NUM_INTERRUPTS)
+	{
+		intFunc[interruptNum] = defaultIsrHandler;
+	}
+}
+
 RTM_EXPORT(pinMode);
 RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
+
+RTM_EXPORT(attachInterrupt);
+RTM_EXPORT(detachInterrupt);
