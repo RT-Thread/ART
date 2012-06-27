@@ -27,12 +27,12 @@ SECTIONS
         *(.glue_7t)
         *(.gnu.linkonce.t*)
 
-	/* section information for module symbol */
-	. = ALIGN(4);
-	__rtmsymtab_start = .;
-	KEEP(*(RTMSymTab))
-	__rtmsymtab_end = .;
-		
+    /* section information for module symbol */
+    . = ALIGN(4);
+    __rtmsymtab_start = .;
+    KEEP(*(RTMSymTab))
+    __rtmsymtab_end = .;
+        
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -76,12 +76,12 @@ SECTIONS
         _edata = . ;
     } >DATA
 
-	.stack : 
-	{
-		. = . + _system_stack_size;
-		. = ALIGN(4);
-		_estack = .;
-	} >DATA
+    .stack : 
+    {
+        . = . + _system_stack_size;
+        . = ALIGN(4);
+        _estack = .;
+    } >DATA
 
     __bss_start = .;
     .bss :

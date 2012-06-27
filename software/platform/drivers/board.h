@@ -15,6 +15,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <rtthread.h>
 #include <stm32f4xx.h>
 
 /* board configuration */
