@@ -8,4 +8,6 @@
 *.properties
 .sconsign.dblite
 JLinkLog.txt
-build/windows/work/
+ide/build/windows/work/
+ide/app/pde.jar
+ide/core/core.jar
