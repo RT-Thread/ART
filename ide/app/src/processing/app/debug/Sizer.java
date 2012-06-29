@@ -47,7 +47,13 @@ public class Sizer implements MessageConsumer {
       toolchainBasePath + "arm-none-eabi-size",
       " "
     };
-    
+
+	int offset;
+	
+	/* remove .cpp or others in primaryClassName */
+	offset = this.sketchName.indexOf('.');
+	this.sketchName = this.sketchName.substring(0, offset);
+
     commandSize[1] = buildPath + File.separator + sketchName + ".mo";
 
     int r = 0;

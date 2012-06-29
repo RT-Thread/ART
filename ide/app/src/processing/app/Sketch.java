@@ -23,7 +23,7 @@
 
 package processing.app;
 
-import processing.app.debug.AvrdudeUploader;
+import processing.app.debug.STM32DfuUploader;
 import processing.app.debug.Compiler;
 import processing.app.debug.RunnerException;
 import processing.app.debug.Sizer;
@@ -1667,7 +1667,7 @@ public class Sketch {
 
     // download the program
     //
-    uploader = new AvrdudeUploader();
+    uploader = new STM32DfuUploader();
     boolean success = uploader.uploadUsingPreferences(buildPath,
                                                       suggestedClassName,
                                                       usingProgrammer);

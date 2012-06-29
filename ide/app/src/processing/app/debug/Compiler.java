@@ -72,6 +72,12 @@ public class Compiler implements MessageConsumer {
 		this.verbose = verbose;
 		this.sketchIsCompiled = false;
 
+		int offset;
+	
+		/* remove .cpp or others in primaryClassName */
+		offset = this.primaryClassName.indexOf('.');
+		this.primaryClassName = this.primaryClassName.substring(0, offset);
+
 		// the pms object isn't used for anything but storage
 		MessageStream pms = new MessageStream(this);
 
@@ -252,7 +258,7 @@ public class Compiler implements MessageConsumer {
 				"-mthumb", "-Wl,-z,max-page-size=0x4", "-shared",
 				"-fPIC", "-Bstatic", "-e", "main", "-nostdlib",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-o",
-				buildPath + File.separator + primaryClassName + ".mo" }));
+				buildPath + File.separator + this.primaryClassName + ".mo" }));
 
 		for (File file : objectFiles) {
 			baseCommandLinker.add(file.getAbsolutePath());
@@ -267,36 +273,21 @@ public class Compiler implements MessageConsumer {
 
 		execAsynchronously(baseCommandLinker);
 
-		List baseCommandObjcopy = new ArrayList(Arrays.asList(new String[] {
-				toolchainBasePath + "arm-none-eabi-objcopy", "-O", "-R", }));
+		sketch.setCompilingProgress(80);
 
-		List commandObjcopy;
+		/* 5. copy to the root directory */
+		String rootfsPath = null;
+		File rootfsFolder = new File(corePath, "../../root");
+		try {
+			rootfsPath = rootfsFolder.getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		// 5. extract EEPROM data (from EEMEM directive) to .eep file.
-		/*
-		 * sketch.setCompilingProgress(70); commandObjcopy = new
-		 * ArrayList(baseCommandObjcopy); commandObjcopy.add(2, "ihex");
-		 * commandObjcopy.set(3, "-j"); commandObjcopy.add(".eeprom");
-		 * commandObjcopy.add("--set-section-flags=.eeprom=alloc,load");
-		 * commandObjcopy.add("--no-change-warnings");
-		 * commandObjcopy.add("--change-section-lma");
-		 * commandObjcopy.add(".eeprom=0"); commandObjcopy.add(buildPath +
-		 * File.separator + primaryClassName + ".elf");
-		 * commandObjcopy.add(buildPath + File.separator + primaryClassName +
-		 * ".eep"); execAsynchronously(commandObjcopy);
-		 */
+		doCopy(buildPath + File.separator + this.primaryClassName + ".mo", 
+				rootfsPath + File.separator + this.primaryClassName + ".mo");
 
-		// 6. build the .hex file
-		/*
-		 * sketch.setCompilingProgress(80); commandObjcopy = new
-		 * ArrayList(baseCommandObjcopy); commandObjcopy.add(2, "ihex");
-		 * commandObjcopy.add(".eeprom"); // remove eeprom data
-		 * commandObjcopy.add(buildPath + File.separator + primaryClassName +
-		 * ".elf"); commandObjcopy.add(buildPath + File.separator +
-		 * primaryClassName + ".hex"); execAsynchronously(commandObjcopy);
-		 */
-
-		sketch.setCompilingProgress(90);
+		sketch.setCompilingProgress(95);
 
 		return true;
 	}
