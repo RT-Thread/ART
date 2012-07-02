@@ -55,8 +55,10 @@
 
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
-// <bool name="RT_USING_UART1" description="Using UART1" default="true" />
-#define RT_USING_UART1
+// <bool name=RT_USING_DEVICE_IPC description="Using IPC in Device Driver Framework" default="true" />
+#define RT_USING_DEVICE_IPC
+// <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
+#define RT_USING_SERIAL
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE	64
 // </section>
@@ -79,7 +81,7 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-#define RT_USING_NEWLIB
+// #define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
