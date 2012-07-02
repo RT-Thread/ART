@@ -22,6 +22,35 @@
 #include <dfs_romfs.h>
 #endif
 
+#define LED_SYS_ON()     GPIO_SetBits(GPIOB, GPIO_Pin_2)
+#define LED_SYS_OFF()    GPIO_ResetBits(GPIOB, GPIO_Pin_2)
+static void led_thread_entry(void* parameter)
+{
+    /* LED : PB2 BOOT1 config. */
+    {
+        GPIO_InitTypeDef  GPIO_InitStructure;
+
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+
+	    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	    /* output setting */
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+		GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+    }
+
+    /* sys led blink. */
+    while(1)
+    {
+        LED_SYS_ON();
+        rt_thread_delay(RT_TICK_PER_SECOND/8);
+        LED_SYS_OFF();
+        rt_thread_delay(RT_TICK_PER_SECOND/4);
+    }
+}
+
 static void thread_entry(void* parameter)
 {
     /* File System Initialization */
@@ -49,9 +78,16 @@ static void thread_entry(void* parameter)
 #endif
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
     rt_thread_t tid;
+
+    tid = rt_thread_create("sys_led",
+    		led_thread_entry, RT_NULL,
+    		2048, RT_THREAD_PRIORITY_MAX-1, 2);
+
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
     tid = rt_thread_create("init",
     		thread_entry, RT_NULL,
