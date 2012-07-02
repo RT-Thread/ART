@@ -47,6 +47,15 @@ static void thread_entry(void* parameter)
     		rt_kprintf("ROM File System initialzation failed!\n");
     }
 #endif
+
+	usbd_hw_init();
+	/* set console and finsh to USB vcom */
+#ifdef RT_USING_CONSOLE
+	rt_console_set_device("vcom");
+#endif
+#ifdef RT_USING_FINSH
+	finsh_set_device("vcom");
+#endif
 }
 
 int rt_application_init()
