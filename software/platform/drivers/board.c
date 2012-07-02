@@ -44,27 +44,6 @@ void NVIC_Configuration(void)
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 }
 
-/*******************************************************************************
- * Function Name  : SysTick_Configuration
- * Description    : Configures the SysTick for OS tick.
- * Input          : None
- * Output         : None
- * Return         : None
- *******************************************************************************/
-void  SysTick_Configuration(void)
-{
-	RCC_ClocksTypeDef  rcc_clocks;
-	rt_uint32_t         cnts;
-
-	RCC_GetClocksFreq(&rcc_clocks);
-
-	cnts = (rt_uint32_t)rcc_clocks.HCLK_Frequency / RT_TICK_PER_SECOND;
-	cnts = cnts / 8;
-
-	SysTick_Config(cnts);
-	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
-}
-
 /**
  * This is the timer interrupt service routine.
  *
@@ -80,23 +59,41 @@ void SysTick_Handler(void)
 	rt_interrupt_leave();
 }
 
+static void gpio_init(void)
+{
+    /* USB_PWR_EN : PC14 PC15. */
+    {
+        GPIO_InitTypeDef  GPIO_InitStructure;
+
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
+	    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
+	    /* output setting */
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
+		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+		GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+		GPIO_Init(GPIOC, &GPIO_InitStructure);
+    }
+}
+
 /**
  * This function will initial STM32 board.
  */
 void rt_hw_board_init()
 {
+    gpio_init();
+
 	/* NVIC Configuration */
 	NVIC_Configuration();
 
 	/* Configure the SysTick */
-	SysTick_Configuration();
+	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
 	rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
 	rt_console_set_device(CONSOLE_DEVICE);
 #endif
-
-	led_init();
 }
 
 #define TICK_MS (1000/RT_TICK_PER_SECOND)
