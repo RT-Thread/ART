@@ -24,6 +24,9 @@
 
 #include "wiring_private.h"
 
+extern rt_uint32_t rt_hw_tick_get_millisecond(void);
+extern rt_uint32_t rt_hw_tick_get_microsecond(void);
+
 unsigned long millis()
 {
 	return rt_hw_tick_get_millisecond();

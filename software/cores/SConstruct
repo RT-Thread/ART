@@ -26,6 +26,7 @@ env = Environment(tools = ['mingw'],
                 RTT_ROOT + '/components/dfs', 
                 RTT_ROOT + '/components/dfs/include',
                 RTT_ROOT + '/components/libc/newlib',
+                RTT_ROOT + '/components/drivers/include',
                 ])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 Export('env')
