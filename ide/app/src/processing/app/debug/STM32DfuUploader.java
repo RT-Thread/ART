@@ -100,7 +100,6 @@ public class STM32DfuUploader extends Uploader  {
     params.add("0483:DF11");
     params.add("-a");
     params.add("0");
-    params.add("-R");
 
     return params;
   }
