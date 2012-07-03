@@ -114,7 +114,7 @@ public class Compiler implements MessageConsumer {
 		}
 
 		String osPath = null;
-		String osIncludePaths[] = {"/include", "/components/finsh"};
+		String osIncludePaths[] = {"/include", "/components/finsh", "/components/drivers/include"};
 
 		File osFolder = new File(corePath, "../../rt-thread");
 		try {
