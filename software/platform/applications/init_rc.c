@@ -22,6 +22,7 @@ static rt_uint32_t read_line(int fd, char* line, rt_uint32_t line_size)
 		if (ch == '\n')
 		{
 			*ptr = ch;
+			ptr ++;
 			goto __exit;
 		}
 
@@ -88,6 +89,53 @@ void script_exec(const char* filename)
 		close(fd);
 	}
 }
+
+/* do all modules on a directory */
+#define FILENAME_MAX	256
+void do_modules(const char *path)
+{
+	char *fn;
+	DIR  *dir;
+
+	fn = rt_malloc(FILENAME_MAX);
+	if (fn == RT_NULL)
+	{
+		rt_kprintf("out of memory\n");
+		return;
+	}
+
+	dir = opendir(path);
+	if (dir != RT_NULL)
+	{
+		struct dirent* dirent;
+		struct stat s;
+
+		do
+		{
+			dirent = readdir(dir);
+			if (dirent == RT_NULL) break;
+			rt_memset(&s, 0, sizeof(struct stat));
+
+			/* build full path for each file */
+			if (path[strlen(path) - 1] != '/')
+				rt_sprintf(fn, "%s/%s", path, dirent->d_name);
+			else
+				rt_sprintf(fn, "%s%s", path, dirent->d_name);
+
+			if (strstr(fn, ".mo") != RT_NULL)
+			{
+				/* execute this module */
+				rt_module_open(fn);
+			}
+		} while (dirent != RT_NULL);
+
+		closedir(dir);
+	}
+	else rt_kprintf("open %s directory failed\n", path);
+
+	rt_free(fn);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(do_modules, exec_modules, executes all modules on a directory);
 
 void do_init(void)
 {

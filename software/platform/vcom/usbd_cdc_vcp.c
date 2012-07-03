@@ -201,18 +201,6 @@ void usb_vcom_init(void)
 		RT_NULL);
 }
 
-#include <finsh.h>
-void usbtest(const char* str)
-{
-	while (*str)
-	{
-		usb_vcom_putc(RT_NULL, *str);
-
-		str ++;
-	}
-}
-FINSH_FUNCTION_EXPORT(usbtest, usb test);
-
 #include "usbd_cdc_core.h"
 #include "usbd_usr.h"
 #include "usb_conf.h"
