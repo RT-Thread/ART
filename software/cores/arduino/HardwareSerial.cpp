@@ -27,21 +27,13 @@
 #include "Arduino.h"
 #include "wiring_private.h"
 
-// this next line disables the entire HardwareSerial.cpp, 
-// this is so I can support Attiny series and any other chip without a uart
-#if defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H)
-
 #include "HardwareSerial.h"
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer (I think), in which head is the index of the location
 // to which to write the next incoming character and tail is the index of the
 // location from which to read.
-#if (RAMEND < 1000)
-  #define SERIAL_BUFFER_SIZE 16
-#else
-  #define SERIAL_BUFFER_SIZE 64
-#endif
+#define SERIAL_BUFFER_SIZE 64
 
 struct ring_buffer
 {
@@ -50,26 +42,8 @@ struct ring_buffer
   volatile int tail;
 };
 
-#if defined(USBCON)
-  ring_buffer rx_buffer = { { 0 }, 0, 0};
-  ring_buffer tx_buffer = { { 0 }, 0, 0};
-#endif
-#if defined(UBRRH) || defined(UBRR0H)
-  ring_buffer rx_buffer  =  { { 0 }, 0, 0 };
-  ring_buffer tx_buffer  =  { { 0 }, 0, 0 };
-#endif
-#if defined(UBRR1H)
-  ring_buffer rx_buffer1  =  { { 0 }, 0, 0 };
-  ring_buffer tx_buffer1  =  { { 0 }, 0, 0 };
-#endif
-#if defined(UBRR2H)
-  ring_buffer rx_buffer2  =  { { 0 }, 0, 0 };
-  ring_buffer tx_buffer2  =  { { 0 }, 0, 0 };
-#endif
-#if defined(UBRR3H)
-  ring_buffer rx_buffer3  =  { { 0 }, 0, 0 };
-  ring_buffer tx_buffer3  =  { { 0 }, 0, 0 };
-#endif
+ring_buffer rx_buffer = { { 0 }, 0, 0};
+ring_buffer tx_buffer = { { 0 }, 0, 0};
 
 inline void store_char(unsigned char c, ring_buffer *buffer)
 {
@@ -399,26 +373,7 @@ size_t HardwareSerial::write(uint8_t c)
 }
 
 // Preinstantiate Objects //////////////////////////////////////////////////////
-
-#if defined(UBRRH) && defined(UBRRL)
-  HardwareSerial Serial(&rx_buffer, &tx_buffer, &UBRRH, &UBRRL, &UCSRA, &UCSRB, &UDR, RXEN, TXEN, RXCIE, UDRIE, U2X);
-#elif defined(UBRR0H) && defined(UBRR0L)
-  HardwareSerial Serial(&rx_buffer, &tx_buffer, &UBRR0H, &UBRR0L, &UCSR0A, &UCSR0B, &UDR0, RXEN0, TXEN0, RXCIE0, UDRIE0, U2X0);
-#elif defined(USBCON)
-  // do nothing - Serial object and buffers are initialized in CDC code
-#else
-  #error no serial port defined  (port 0)
-#endif
-
-#if defined(UBRR1H)
-  HardwareSerial Serial1(&rx_buffer1, &tx_buffer1, &UBRR1H, &UBRR1L, &UCSR1A, &UCSR1B, &UDR1, RXEN1, TXEN1, RXCIE1, UDRIE1, U2X1);
-#endif
-#if defined(UBRR2H)
-  HardwareSerial Serial2(&rx_buffer2, &tx_buffer2, &UBRR2H, &UBRR2L, &UCSR2A, &UCSR2B, &UDR2, RXEN2, TXEN2, RXCIE2, UDRIE2, U2X2);
-#endif
-#if defined(UBRR3H)
-  HardwareSerial Serial3(&rx_buffer3, &tx_buffer3, &UBRR3H, &UBRR3L, &UCSR3A, &UCSR3B, &UDR3, RXEN3, TXEN3, RXCIE3, UDRIE3, U2X3);
-#endif
+HardwareSerial Serial(&rx_buffer, &tx_buffer);
 
 #endif // whole file
 

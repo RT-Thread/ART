@@ -59,21 +59,7 @@ class HardwareSerial : public Stream
     using Print::write; // pull in write(str) and write(buf, size) from Print
 };
 
-#if defined(UBRRH) || defined(UBRR0H)
-  extern HardwareSerial Serial;
-#elif defined(USBCON)
-  #include "USBAPI.h"
-//  extern HardwareSerial Serial_;  
-#endif
-#if defined(UBRR1H)
-  extern HardwareSerial Serial1;
-#endif
-#if defined(UBRR2H)
-  extern HardwareSerial Serial2;
-#endif
-#if defined(UBRR3H)
-  extern HardwareSerial Serial3;
-#endif
+extern HardwareSerial Serial;
 
 extern void serialEventRun(void) __attribute__((weak));
 
