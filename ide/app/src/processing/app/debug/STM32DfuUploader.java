@@ -89,12 +89,13 @@ public class STM32DfuUploader extends Uploader  {
       target = Base.targetsTable.get(programmer.substring(0, programmer.indexOf(":")));
       programmer = programmer.substring(programmer.indexOf(":") + 1);
     }
+    
+    System.out.println("burn bootloader");
     return burnBootloader(getProgrammerCommands(target, programmer));
   }
   
   private Collection getProgrammerCommands(Target target, String programmer) {
     List params = new ArrayList();
-    params.add("dfu-util");
     params.add("-d");
     params.add("0483:DF11");
     params.add("-a");
@@ -121,9 +122,17 @@ public class STM32DfuUploader extends Uploader  {
   }
 
   protected boolean burnBootloader(Collection params) throws RunnerException {
-	  boolean result = true;
-		 
-	  return result;
+	  if ((new File(Base.getTarget().getFolder().getAbsolutePath() + File.separator + "rtthread.bin")).exists()) {
+	      params.add("-s");
+	      params.add("0x08000000");
+	      params.add("-D");
+	      params.add(Base.getTarget().getFolder().getAbsolutePath() + File.separator + "rtthread.bin");
+
+		  return dfu(params);
+	  }
+
+	  System.err.println("rtthread.bin is missing");
+	  return false;
   }
 
   public boolean buildRomFS() {
