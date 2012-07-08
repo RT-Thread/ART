@@ -75,6 +75,42 @@ struct pin_index pins[] =
 	{53, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_4},
 };
 
+typedef struct
+{
+	TIM_TypeDef *tim;
+	uint32_t tim_rcc;
+	uint16_t tim_channel;
+	uint8_t pin_source;
+	uint8_t gpio_af;
+} pin_to_timer_index_t;
+
+pin_to_timer_index_t pin_to_timer_index[] = {
+	{0},
+	{0},
+	{0},
+	{0},
+	{0},
+
+	{0},
+	{0},
+	{0},
+	{0},
+	{0},
+
+	{0},
+	{0},
+	{0},
+	{TIM9, RCC_APB2Periph_TIM9, TIM_Channel_1, GPIO_PinSource5, GPIO_AF_TIM9},
+};
+
+inline pin_to_timer_index_t *pin_to_timer(uint8_t pin)
+{
+	if (pin >= ITEM_NUM(pin_to_timer_index))
+		return RT_NULL;
+	else
+		return pin_to_timer_index + pin;
+}
+
 void pinMode(uint8_t pin, uint8_t mode)
 {
 	const struct pin_index* index;
@@ -140,6 +176,114 @@ int digitalRead(uint8_t pin)
 }
 FINSH_FUNCTION_EXPORT(digitalRead, read value from digital pin);
 
+#define PWM_COUNTER_CLOCK 	1000000
+#define PWM_FREQUENCY		10000
+
+void pwmConfig(uint8_t pin, int frequency, int duty_cycle)
+{
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+	uint16_t PrescalerValue;
+	GPIO_InitTypeDef GPIO_InitStructure;
+	pin_to_timer_index_t *timer_index;
+	struct pin_index *pin_index_p;
+	uint32_t period = PWM_COUNTER_CLOCK / frequency - 1;
+
+ 	if(pin >= ITEM_NUM(pins))
+		return;
+	pin_index_p = pins + pin;
+
+	timer_index = pin_to_timer(pin);
+	if(!timer_index)
+		return;
+
+	/* TIM9 clock enable */
+	RCC_APB2PeriphClockCmd(timer_index->tim_rcc, ENABLE);
+
+	/* GPIO clock enable */
+	RCC_AHB1PeriphClockCmd(pin_index_p->rcc, ENABLE);
+
+	/* GPIO configuration */
+	GPIO_InitStructure.GPIO_Pin = pin_index_p->pin;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOE, &GPIO_InitStructure);
+	/* Connect TIM3 pins to AF */
+	GPIO_PinAFConfig(pin_index_p->gpio, timer_index->pin_source, timer_index->gpio_af);
+
+	/* Compute the prescaler value */
+	PrescalerValue = (uint16_t) ((SystemCoreClock /2) / PWM_COUNTER_CLOCK) - 1;
+	
+	/* Time base configuration */
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+	TIM_TimeBaseStructure.TIM_Period = period;
+	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(timer_index->tim, &TIM_TimeBaseStructure);
+
+	/* PWM1 Mode configuration: Channel1 */
+	TIM_OCStructInit(&TIM_OCInitStructure);
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_Pulse = period * duty_cycle / 255;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+	switch (timer_index->tim_channel)
+	{
+		case TIM_Channel_1:
+			TIM_OC1Init(timer_index->tim, &TIM_OCInitStructure);
+			TIM_OC1PreloadConfig(timer_index->tim, TIM_OCPreload_Enable);
+			break;
+		case TIM_Channel_2:
+			TIM_OC1Init(timer_index->tim, &TIM_OCInitStructure);
+			TIM_OC1PreloadConfig(timer_index->tim, TIM_OCPreload_Enable);
+			break;
+		case TIM_Channel_3:
+			TIM_OC1Init(timer_index->tim, &TIM_OCInitStructure);
+			TIM_OC1PreloadConfig(timer_index->tim, TIM_OCPreload_Enable);
+			break;
+		case TIM_Channel_4:
+			TIM_OC1Init(timer_index->tim, &TIM_OCInitStructure);
+			TIM_OC1PreloadConfig(timer_index->tim, TIM_OCPreload_Enable);
+			break;
+		default:
+			RT_ASSERT(0);
+			return;
+	}
+
+	TIM_ARRPreloadConfig(timer_index->tim, ENABLE);
+	TIM_Cmd(timer_index->tim, ENABLE);
+}
+
+void analogWrite(uint8_t pin, int val)
+{
+	// We need to make sure the PWM output is enabled for those pins
+	// that support it, as we turn it off when digitally reading or
+	// writing with them.  Also, make sure the pin is in output mode
+	// for consistenty with Wiring, which doesn't require a pinMode
+	// call for the analog output pins.
+
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+
+	pinMode(pin, OUTPUT);
+	if (val == 0)
+	{
+		digitalWrite(pin, LOW);
+	}
+	else if (val == 255)
+	{
+		digitalWrite(pin, HIGH);
+	}
+	else
+	{
+		pwmConfig(pin, PWM_FREQUENCY, val);
+	}
+}
+FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
+
 volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
 
 static void defaultIsrHandler(void)
@@ -174,6 +318,7 @@ void detachInterrupt(uint8_t interruptNum) {
 RTM_EXPORT(pinMode);
 RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
+RTM_EXPORT(analogWrite);
 
 RTM_EXPORT(attachInterrupt);
 RTM_EXPORT(detachInterrupt);
