@@ -84,9 +84,10 @@ typedef struct
 	uint8_t gpio_af;
 } pin_to_timer_index_t;
 
+#define NOT_A_TIM RT_NULL
 pin_to_timer_index_t pin_to_timer_index[] = {
-	{0},
-	{0},
+	{NOT_A_TIM},
+	{NOT_A_TIM},
 	{TIM3, RCC_APB1Periph_TIM3, TIM_Channel_3, GPIO_PinSource8, GPIO_AF_TIM3},
 	{TIM2, RCC_APB1Periph_TIM2, TIM_Channel_4, GPIO_PinSource11, GPIO_AF_TIM2},
 	{TIM1, RCC_APB2Periph_TIM1, TIM_Channel_4, GPIO_PinSource14, GPIO_AF_TIM1},
@@ -194,7 +195,7 @@ void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
 	pin_index_p = pins + pin;
 
 	timer_index = pin_to_timer(pin);
-	if(!timer_index)
+	if(!timer_index || !timer_index->tim)
 		return;
 
 	/* TIM clock enable */
