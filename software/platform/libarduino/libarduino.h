@@ -25,6 +25,9 @@ void pinMode(uint8_t pin, uint8_t mode);
 void digitalWrite(uint8_t pin, uint8_t value);
 int digitalRead(uint8_t pin);
 
+void analogWrite(uint8_t pin, uint8_t val);
+
+
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode);
 void detachInterrupt(uint8_t interruptNum);
 
