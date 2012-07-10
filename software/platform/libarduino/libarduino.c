@@ -87,19 +87,19 @@ typedef struct
 pin_to_timer_index_t pin_to_timer_index[] = {
 	{0},
 	{0},
-	{0},
-	{0},
-	{0},
+	{TIM3, RCC_APB1Periph_TIM3, TIM_Channel_3, GPIO_PinSource8, GPIO_AF_TIM3},
+	{TIM2, RCC_APB1Periph_TIM2, TIM_Channel_4, GPIO_PinSource11, GPIO_AF_TIM2},
+	{TIM1, RCC_APB2Periph_TIM1, TIM_Channel_4, GPIO_PinSource14, GPIO_AF_TIM1},
 
-	{0},
-	{0},
-	{0},
-	{0},
-	{0},
+	{TIM1, RCC_APB2Periph_TIM1, TIM_Channel_3, GPIO_PinSource13, GPIO_AF_TIM1},
+	{TIM1, RCC_APB2Periph_TIM1, TIM_Channel_2, GPIO_PinSource11, GPIO_AF_TIM1},
+	{TIM1, RCC_APB2Periph_TIM1, TIM_Channel_1, GPIO_PinSource9, GPIO_AF_TIM1},
+	{TIM4, RCC_APB1Periph_TIM4, TIM_Channel_1, GPIO_PinSource12, GPIO_AF_TIM4},
+	{TIM4, RCC_APB1Periph_TIM4, TIM_Channel_2, GPIO_PinSource13, GPIO_AF_TIM4},
 
-	{0},
-	{0},
-	{0},
+	{TIM4, RCC_APB1Periph_TIM4, TIM_Channel_3, GPIO_PinSource14, GPIO_AF_TIM4},
+	{TIM4, RCC_APB1Periph_TIM4, TIM_Channel_4, GPIO_PinSource15, GPIO_AF_TIM4},
+	{TIM9, RCC_APB2Periph_TIM8, TIM_Channel_2, GPIO_PinSource6, GPIO_AF_TIM9},
 	{TIM9, RCC_APB2Periph_TIM9, TIM_Channel_1, GPIO_PinSource5, GPIO_AF_TIM9},
 };
 
@@ -179,7 +179,7 @@ FINSH_FUNCTION_EXPORT(digitalRead, read value from digital pin);
 #define PWM_COUNTER_CLOCK 	1000000
 #define PWM_FREQUENCY		10000
 
-void pwmConfig(uint8_t pin, int frequency, int duty_cycle)
+void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
@@ -197,7 +197,7 @@ void pwmConfig(uint8_t pin, int frequency, int duty_cycle)
 	if(!timer_index)
 		return;
 
-	/* TIM9 clock enable */
+	/* TIM clock enable */
 	RCC_APB2PeriphClockCmd(timer_index->tim_rcc, ENABLE);
 
 	/* GPIO clock enable */
@@ -257,7 +257,7 @@ void pwmConfig(uint8_t pin, int frequency, int duty_cycle)
 	TIM_Cmd(timer_index->tim, ENABLE);
 }
 
-void analogWrite(uint8_t pin, int val)
+void analogWrite(uint8_t pin, uint8_t value)
 {
 	// We need to make sure the PWM output is enabled for those pins
 	// that support it, as we turn it off when digitally reading or
@@ -268,20 +268,22 @@ void analogWrite(uint8_t pin, int val)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 
-	pinMode(pin, OUTPUT);
-	if (val == 0)
+	if (value == 0)
 	{
+		pinMode(pin, OUTPUT);
 		digitalWrite(pin, LOW);
 	}
-	else if (val == 255)
+	else if (value == 255)
 	{
+		pinMode(pin, OUTPUT);
 		digitalWrite(pin, HIGH);
 	}
 	else
 	{
-		pwmConfig(pin, PWM_FREQUENCY, val);
+		pwmConfig(pin, PWM_FREQUENCY, value);
 	}
 }
+
 FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
 
 volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
