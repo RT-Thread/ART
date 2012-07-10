@@ -254,9 +254,10 @@ public class Compiler implements MessageConsumer {
 		// 4. link it all together into the .elf file
 		sketch.setCompilingProgress(60);
 		List baseCommandLinker = new ArrayList(Arrays.asList(new String[] {
-				toolchainBasePath + "arm-none-eabi-gcc", "-Os",
+				toolchainBasePath + "arm-none-eabi-g++", "-Os",
 				"-mthumb", "-Wl,-z,max-page-size=0x4", "-shared",
-				"-fPIC", "-Bstatic", "-e", "main", "-nostdlib",
+				"-fPIC", "-Bstatic", "-e", "main", 
+				"-nostdlib","-lgcc",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-o",
 				buildPath + File.separator + this.primaryClassName + ".mo" }));
 
@@ -269,13 +270,21 @@ public class Compiler implements MessageConsumer {
 		//	baseCommandLinker.add("-L" + libcorePath);
 		// else
 		//	baseCommandLinker.add("-L" + buildPath);
-		// baseCommandLinker.add("-lm");
+		baseCommandLinker.add("-lm");
 
 		execAsynchronously(baseCommandLinker);
+		sketch.setCompilingProgress(70);
+
+		/* 5. strip object file */
+		List baseCommandStrip = new ArrayList(Arrays.asList(new String[] {
+				toolchainBasePath + "arm-none-eabi-strip", 
+				"-g", "-S", "-d", 
+				buildPath + File.separator + this.primaryClassName + ".mo" }));
+		execAsynchronously(baseCommandStrip);
 
 		sketch.setCompilingProgress(80);
 
-		/* 5. copy to the root directory */
+		/* 6. copy to the root directory */
 		String rootfsPath = null;
 		File rootfsFolder = new File(corePath, "../../root");
 		try {
@@ -655,14 +664,13 @@ public class Compiler implements MessageConsumer {
 		List baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
 				toolchainBasePath + "arm-none-eabi-gcc",
 				"-c", // compile, don't link
-				"-g", // include debugging info (so errors include line numbers)
+				// "-g", // include debugging info (so errors include line numbers)
+				"-Os",
 				"-assembler-with-cpp",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb",
 				"-mlong-calls", "-fPIC", "-fno-exceptions",
 				// "-DF_CPU=" + boardPreferences.get("build.f_cpu"),
 				"-DARDUINO=" + Base.REVISION,
-		// "-DUSB_VID=" + boardPreferences.get("build.vid"),
-		// "-DUSB_PID=" + boardPreferences.get("build.pid"),
 				}));
 
 		for (int i = 0; i < includePaths.size(); i++) {
@@ -682,21 +690,14 @@ public class Compiler implements MessageConsumer {
 		List baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
 				toolchainBasePath + "arm-none-eabi-gcc",
 				"-c", // compile, don't link
-				"-g", // include debugging info (so errors include line numbers)
 				"-Os", // optimize for size
-				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w", // show
-																			// warnings
-																			// if
-																			// verbose
-				// "-ffunction-sections", // place each function in its own
-				// section
+				// show warnings if verbose 
+				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
+				// "-ffunction-sections", // place each function in its own section
 				// "-fdata-sections",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb",
 				"-mlong-calls", "-fPIC", "-fno-exceptions",
-				// "-DF_CPU=" + boardPreferences.get("build.f_cpu"),
 				"-MMD", // output dependancy info
-				// "-DUSB_VID=" + boardPreferences.get("build.vid"),
-				// "-DUSB_PID=" + boardPreferences.get("build.pid"),
 				"-DARDUINO=" + Base.REVISION, }));
 
 		for (int i = 0; i < includePaths.size(); i++) {
@@ -717,22 +718,17 @@ public class Compiler implements MessageConsumer {
 		List baseCommandCompilerCPP = new ArrayList(Arrays.asList(new String[] {
 				toolchainBasePath + "arm-none-eabi-g++",
 				"-c", // compile, don't link
-				"-g", // include debugging info (so errors include line numbers)
 				"-Os", // optimize for size
-				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w", // show
-																			// warnings
-																			// if
-																			// verbose
-				// "-fno-exceptions",
+				// show warnings if verbos
+				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
+				"-fno-exceptions",
+				"-fno-rtti", "-funwind-tables", "-fstrict-aliasing",
 				// "-ffunction-sections", // place each function in its own
 				// section
 				// "-fdata-sections",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb",
-				"-mlong-calls", "-fPIC", "-fno-exceptions",
-				// "-DF_CPU=" + boardPreferences.get("build.f_cpu"),
+				"-mlong-calls", "-fPIC",
 				"-MMD", // output dependancy info
-				// "-DUSB_VID=" + boardPreferences.get("build.vid"),
-				// "-DUSB_PID=" + boardPreferences.get("build.pid"),
 				"-DARDUINO=" + Base.REVISION, }));
 
 		for (int i = 0; i < includePaths.size(); i++) {

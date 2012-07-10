@@ -134,7 +134,13 @@ public class SerialMonitor extends JFrame implements MessageConsumer {
     serialRates.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         String wholeString = (String) serialRates.getSelectedItem();
-        String rateString = wholeString.substring(0, wholeString.indexOf(' '));
+        String rateString = "";
+        int index;
+        char[] c = wholeString.toCharArray();
+        for (index = 0; index < wholeString.length(); index ++){
+        	if (Character.isDigit(wholeString.charAt(index)))
+        		rateString += wholeString.charAt(index);
+        }
         serialRate = Integer.parseInt(rateString);
         Preferences.set("serial.debug_rate", rateString);
         closeSerialPort();
