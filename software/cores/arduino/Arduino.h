@@ -101,6 +101,7 @@ int digitalRead(uint8_t);
 int analogRead(uint8_t);
 void analogReference(uint8_t mode);
 void analogWrite(uint8_t, int);
+void tone(uint8_t, uint16_t, unsigned long);
 
 unsigned long millis(void);
 unsigned long micros(void);
@@ -200,7 +201,6 @@ uint16_t makeWord(byte h, byte l);
 
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);
 
-void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0);
 void noTone(uint8_t _pin);
 
 // WMath prototypes
