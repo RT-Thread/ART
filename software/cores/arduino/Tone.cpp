@@ -227,7 +227,7 @@ static int8_t toneBegin(uint8_t _pin)
 
 
 // frequency (in hertz) and duration (in milliseconds).
-
+#if 0 // moved to libarduino
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
   uint8_t prescalarbits = 0b001;
@@ -406,7 +406,7 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
     }
   }
 }
-
+#endif
 
 // XXX: this function only works properly for timer 2 (the only one we use
 // currently).  for the others, it should end the tone, but won't restore

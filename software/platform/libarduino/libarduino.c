@@ -287,6 +287,17 @@ void analogWrite(uint8_t pin, uint8_t value)
 }
 FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
 
+/* normally the tone frequency should be 31 to 4978, refer to piches.h */
+void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
+{
+	RT_ASSERT(frequency * 2 < UINT16_MAX);
+	pwmConfig(pin, UINT8_MAX / 2, frequency, UINT16_MAX);
+	rt_thread_delay(rt_tick_from_millisecond(duration));
+	pinMode(pin, OUTPUT);
+	digitalWrite(pin, LOW);
+}
+FINSH_FUNCTION_EXPORT(tone, generates a square wave of specified freqency (and 50% duty cycle) on a pin);
+
 volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
 
 static void defaultIsrHandler(void)
@@ -322,6 +333,7 @@ RTM_EXPORT(pinMode);
 RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
 RTM_EXPORT(analogWrite);
+RTM_EXPORT(tone);
 
 RTM_EXPORT(attachInterrupt);
 RTM_EXPORT(detachInterrupt);
