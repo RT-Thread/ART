@@ -177,10 +177,7 @@ int digitalRead(uint8_t pin)
 }
 FINSH_FUNCTION_EXPORT(digitalRead, read value from digital pin);
 
-#define PWM_COUNTER_CLOCK 	1000000
-#define PWM_FREQUENCY		10000
-
-void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
+void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned int clock)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
@@ -188,7 +185,8 @@ void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	pin_to_timer_index_t *timer_index;
 	struct pin_index *pin_index_p;
-	uint32_t period = PWM_COUNTER_CLOCK / frequency - 1;
+	uint32_t period = clock / frequency - 1;
+	RT_ASSERT(period <= UINT16_MAX);
 
  	if(pin >= ITEM_NUM(pins))
 		return;
@@ -215,7 +213,8 @@ void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
 	GPIO_PinAFConfig(pin_index_p->gpio, timer_index->pin_source, timer_index->gpio_af);
 
 	/* Compute the prescaler value */
-	PrescalerValue = (uint16_t) ((SystemCoreClock /2) / PWM_COUNTER_CLOCK) - 1;
+	RT_ASSERT(SystemCoreClock / 2 / clock - 1 <= UINT16_MAX);
+	PrescalerValue = (uint16_t) (SystemCoreClock / 2 / clock - 1);
 	
 	/* Time base configuration */
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
@@ -229,7 +228,7 @@ void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
 	TIM_OCStructInit(&TIM_OCInitStructure);
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_Pulse = period * duty_cycle / 255;
+	TIM_OCInitStructure.TIM_Pulse = period * duty_cycle / UINT8_MAX;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	switch (timer_index->tim_channel)
 	{
@@ -258,6 +257,8 @@ void pwmConfig(uint8_t pin, int frequency, uint8_t duty_cycle)
 	TIM_Cmd(timer_index->tim, ENABLE);
 }
 
+#define PWM_COUNTER_CLOCK 	1000000	// choose a value which will result in proper prescalar value
+#define PWM_FREQUENCY		64000	// choose a value which will result in proper period
 void analogWrite(uint8_t pin, uint8_t value)
 {
 	// We need to make sure the PWM output is enabled for those pins
@@ -281,10 +282,9 @@ void analogWrite(uint8_t pin, uint8_t value)
 	}
 	else
 	{
-		pwmConfig(pin, PWM_FREQUENCY, value);
+		pwmConfig(pin, value, PWM_FREQUENCY, PWM_COUNTER_CLOCK);
 	}
 }
-
 FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
 
 volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
