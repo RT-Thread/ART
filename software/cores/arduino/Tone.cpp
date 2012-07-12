@@ -464,7 +464,7 @@ void disableTimer(uint8_t _timer)
   }
 }
 
-
+#if 0 // move to libarduino
 void noTone(uint8_t _pin)
 {
   int8_t _timer = -1;
@@ -480,6 +480,7 @@ void noTone(uint8_t _pin)
 
   digitalWrite(_pin, 0);
 }
+#endif
 
 #if 0
 #if !defined(__AVR_ATmega8__)

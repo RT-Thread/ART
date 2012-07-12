@@ -287,6 +287,19 @@ void analogWrite(uint8_t pin, uint8_t value)
 }
 FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
 
+void noTone(uint8_t pin)
+{
+	pin_to_timer_index_t *index_p = pin_to_timer(pin);
+	if (index_p)
+	{
+		TIM_Cmd(index_p->tim, DISABLE);
+		pinMode(pin, OUTPUT);
+		digitalWrite(pin, LOW);
+	}
+}
+FINSH_FUNCTION_EXPORT(noTone, Stops the generation of a square wave triggered by tone());
+
+
 /* normally the tone frequency should be 31 to 4978, refer to piches.h */
 void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
 {
