@@ -37,6 +37,7 @@ void analogReference(uint8_t mode)
 	analog_reference = mode;
 }
 
+#if 0	// Linked to libarduino when module is loaded
 int analogRead(uint8_t pin)
 {
 	uint8_t low, high;
@@ -95,7 +96,6 @@ int analogRead(uint8_t pin)
 // hardware support.  These are defined in the appropriate
 // pins_*.c file.  For the rest of the pins, we default
 // to digital output.
-#if 0	// Linked to libarduino when module is loaded
 void analogWrite(uint8_t pin, uint8_t val)
 {
 	// We need to make sure the PWM output is enabled for those pins

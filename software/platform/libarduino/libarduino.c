@@ -85,7 +85,8 @@ typedef struct
 } pin_to_timer_index_t;
 
 #define NOT_A_TIM RT_NULL
-pin_to_timer_index_t pin_to_timer_index[] = {
+pin_to_timer_index_t pin_to_timer_index[] =
+{
 	{NOT_A_TIM},
 	{NOT_A_TIM},
 	{TIM3, RCC_APB1Periph_TIM3, TIM_Channel_3, GPIO_PinSource8, GPIO_AF_TIM3},
@@ -110,6 +111,44 @@ inline pin_to_timer_index_t *pin_to_timer(uint8_t pin)
 		return RT_NULL;
 	else
 		return pin_to_timer_index + pin;
+}
+
+typedef struct
+{
+	uint32_t rcc;
+	GPIO_TypeDef *gpio;
+	uint32_t pin;
+	ADC_TypeDef *adc;
+	uint32_t adc_rcc;
+	uint8_t adc_channel;
+} pin_to_analog_index_t;
+
+pin_to_analog_index_t pin_to_analog_index[] =
+{
+	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_0, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_10},
+	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_1, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_11},
+	{RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_0, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_0},
+	{RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_1, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_1},
+	{RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_2, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_2},
+
+	{RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_3, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_3},
+	{RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_5, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_5},
+	{RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_6, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_6},
+	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_4, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_14},
+	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_5, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_15},
+
+	{RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_0, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_8},
+	{RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_1, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_9},
+	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_3, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_13},
+	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_2, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_12}
+};
+
+inline pin_to_analog_index_t *pin_to_analog(uint8_t pin)
+{
+	if (pin >= ITEM_NUM(pin_to_analog_index))
+		return RT_NULL;
+	else
+		return pin_to_analog_index + pin;
 }
 
 void pinMode(uint8_t pin, uint8_t mode)
@@ -287,6 +326,49 @@ void analogWrite(uint8_t pin, uint8_t value)
 }
 FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
 
+int analogRead(uint8_t pin)
+{
+	ADC_InitTypeDef ADC_InitStructure;
+	ADC_CommonInitTypeDef ADC_CommonInitStructure;
+	GPIO_InitTypeDef GPIO_InitStruture;
+	pin_to_analog_index_t *pin_index_p;
+
+	pin_index_p = pin_to_analog(pin);
+
+	RCC_AHB1PeriphClockCmd(pin_index_p->rcc, ENABLE);
+
+	GPIO_InitStruture.GPIO_Pin = pin_index_p->pin;
+	GPIO_InitStruture.GPIO_Mode = GPIO_Mode_AN;
+	GPIO_InitStruture.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(pin_index_p->gpio, &GPIO_InitStruture);
+
+	RCC_APB2PeriphClockCmd(pin_index_p->adc_rcc, ENABLE);
+
+	ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
+	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
+	ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
+	ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
+	ADC_CommonInit(&ADC_CommonInitStructure);
+
+	ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+	ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStructure.ADC_NbrOfConversion = 1;
+	ADC_Init(pin_index_p->adc, &ADC_InitStructure);
+
+	ADC_RegularChannelConfig(pin_index_p->adc, pin_index_p->adc_channel, 1, ADC_SampleTime_3Cycles);
+	ADC_Cmd(pin_index_p->adc, ENABLE);
+
+	ADC_SoftwareStartConv(pin_index_p->adc);
+	while(ADC_GetFlagStatus(pin_index_p->adc, ADC_FLAG_EOC) == RESET)
+		;
+	return ADC_GetConversionValue(pin_index_p->adc);
+}
+FINSH_FUNCTION_EXPORT(analogRead, Reads the value from the specified analog pin);
+
 void noTone(uint8_t pin)
 {
 	pin_to_timer_index_t *index_p = pin_to_timer(pin);
@@ -346,6 +428,7 @@ RTM_EXPORT(pinMode);
 RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
 RTM_EXPORT(analogWrite);
+RTM_EXPORT(analogRead);
 RTM_EXPORT(tone);
 
 RTM_EXPORT(attachInterrupt);
