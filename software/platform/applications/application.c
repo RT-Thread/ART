@@ -92,6 +92,13 @@ static void thread_entry(void* parameter)
 #ifdef RT_USING_FINSH
 	finsh_set_device("vcom");
 #endif
+#ifdef RT_USING_USB_HOST
+	rt_usb_host_init();
+    /* register stm32 usb host controller driver */
+    rt_hw_susb_init();
+
+	rt_device_init_all();
+#endif
 }
 
 int rt_application_init(void)

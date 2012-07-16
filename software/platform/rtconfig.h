@@ -63,6 +63,24 @@
 #define RT_UART_RX_BUFFER_SIZE	64
 // </section>
 
+// </section>
+
+// <section name="RT_USING_USB_HOST" description="USB Host stack" default="true" >
+#define RT_USING_USB_HOST
+// <bool name="RT_USB_CLASS_MASS_STORAGE" description="Using USB mass storage class" default="true" />
+//#define RT_USB_CLASS_MASS_STORAGE
+// <bool name="RT_USB_CLASS_ADK" description="Using ADK class" default="true" />
+#define RT_USB_CLASS_ADK
+// <bool name="RT_USB_CLASS_HID" description="Using HID class" default="true" />
+//#define RT_USB_CLASS_HID
+// <bool name="RT_USB_HID_MOUSE" description="Using HID mouse protocal" default="true" />
+//#define RT_USB_HID_MOUSE
+// <bool name="RT_USB_HID_KEYBOARD" description="Using HID keyboard protocal" default="true" />
+//#define RT_USB_HID_KEYBOARD
+// <string name="UDISK_MOUNTPOINT" description="udisk mount point" default="/" />
+//#define UDISK_MOUNTPOINT	"/"
+// </section>
+
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
