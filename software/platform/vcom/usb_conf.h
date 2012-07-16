@@ -58,6 +58,7 @@
 *******************************************************************************/
 #define USB_OTG_FS_CORE
 #define USE_USB_OTG_FS
+#define USB_OTG_HS_CORE
 
 /****************** USB OTG HS PHY CONFIGURATION *******************************
 *  The USB OTG HS Core supports two PHY interfaces:
@@ -138,6 +139,10 @@
  #define TX4_FIFO_HS_SIZE                           0
  #define TX5_FIFO_HS_SIZE                           0
 
+ #define RX_FIFO_HS_SIZE                          512
+ #define TXH_NP_HS_FIFOSIZ                        256
+ #define TXH_P_HS_FIFOSIZ                         256
+
 // #define USB_OTG_HS_SOF_OUTPUT_ENABLED
 
  #ifdef USE_ULPI_PHY
@@ -164,6 +169,9 @@
  #define TX2_FIFO_FS_SIZE                          32 
  #define TX3_FIFO_FS_SIZE                           0
 
+ #define TXH_NP_FS_FIFOSIZ                         96
+ #define TXH_P_FS_FIFOSIZ                          96
+
 // #define USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
 // #define USB_OTG_FS_SOF_OUTPUT_ENABLED
 #endif
@@ -172,7 +180,7 @@
 // #define VBUS_SENSING_ENABLED
 
 /****************** USB OTG MODE CONFIGURATION ********************************/
-//#define USE_HOST_MODE
+#define USE_HOST_MODE
 #define USE_DEVICE_MODE
 //#define USE_OTG_MODE
 

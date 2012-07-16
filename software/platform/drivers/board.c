@@ -74,6 +74,15 @@ static void gpio_init(void)
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 		GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
 		GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+		/* output setting */
+		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+		GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+		GPIO_Init(GPIOC, &GPIO_InitStructure);
+		GPIO_ResetBits(GPIOC, GPIO_Pin_15);
     }
 }
 
