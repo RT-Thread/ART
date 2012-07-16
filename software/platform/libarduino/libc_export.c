@@ -17,6 +17,10 @@ RTM_EXPORT(strstr);
 RTM_EXPORT(strchr);
 RTM_EXPORT(strncmp);
 RTM_EXPORT(strncpy);
+RTM_EXPORT(malloc);
+RTM_EXPORT(free);
+RTM_EXPORT(realloc);
+RTM_EXPORT(calloc);
 
 /* BPABI symbols */
 extern int __aeabi_cdcmpeq;
@@ -85,6 +89,7 @@ extern int __aeabi_uread4;
 extern int __aeabi_uread8;
 extern int __aeabi_uwrite4;
 extern int __aeabi_uwrite8;
+extern int __aeabi_atexit;
 
 RTM_EXPORT(__aeabi_cdcmpeq);
 RTM_EXPORT(__aeabi_cdcmple);
@@ -152,3 +157,4 @@ RTM_EXPORT(__aeabi_uread4);
 RTM_EXPORT(__aeabi_uread8);
 RTM_EXPORT(__aeabi_uwrite4);
 RTM_EXPORT(__aeabi_uwrite8);
+RTM_EXPORT(__aeabi_atexit);
