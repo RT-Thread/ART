@@ -37,6 +37,7 @@ void analogReference(uint8_t mode)
 	analog_reference = mode;
 }
 
+#if 0	// Linked to libarduino when module is loaded
 int analogRead(uint8_t pin)
 {
 	uint8_t low, high;
@@ -95,7 +96,7 @@ int analogRead(uint8_t pin)
 // hardware support.  These are defined in the appropriate
 // pins_*.c file.  For the rest of the pins, we default
 // to digital output.
-void analogWrite(uint8_t pin, int val)
+void analogWrite(uint8_t pin, uint8_t val)
 {
 	// We need to make sure the PWM output is enabled for those pins
 	// that support it, as we turn it off when digitally reading or
@@ -113,7 +114,6 @@ void analogWrite(uint8_t pin, int val)
 	}
 	else
 	{
-#if 0 // bernard.xiong
 		switch(digitalPinToTimer(pin))
 		{
 			// XXX fix needed for atmega8
@@ -269,6 +269,6 @@ void analogWrite(uint8_t pin, int val)
 					digitalWrite(pin, HIGH);
 				}
 		}
-#endif
 	}
 }
+#endif

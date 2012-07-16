@@ -1,8 +1,10 @@
 *.pyc
 *.bak
+*.dep
 *.class
 *.o
 *.a
+*.elf
 *.bin
 *.map
 *.properties
@@ -11,3 +13,6 @@ JLinkLog.txt
 ide/build/windows/work/
 ide/app/pde.jar
 ide/core/core.jar
+software/platform/build
+software/platform/project*
+software/rt-thread

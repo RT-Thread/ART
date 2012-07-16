@@ -5,11 +5,18 @@ ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='gcc'
 
-PLATFORM 	= 'gcc'
-EXEC_PATH 	= 'D:/pxxiong/Tools/RDT/eclipse/arm/bin/'
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
+
+if  CROSS_TOOL == 'gcc':
+	PLATFORM 	= 'gcc'
+	EXEC_PATH 	= 'C:/Program Files (x86)/CodeSourcery/Sourcery G++ Lite/bin'
+elif CROSS_TOOL == 'keil':
+	PLATFORM 	= 'armcc'
+	EXEC_PATH 	= 'E:/Keil'
 
 if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 STM32_TYPE = 'STM32F4XX'

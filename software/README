@@ -1,9 +1,0 @@
-Please put this directory as ART board directory of ART IDE.
-
-Directory description
----------------------
-
-examples  -- some examples for arduino like program or the native program. 
-cores     -- implementation of arduino APIs.
-platform  -- platform program of ART, which is the RT-Thread RTOS kernel.
-rt-thread -- RT-Thread RTOS directory.
