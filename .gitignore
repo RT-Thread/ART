@@ -16,3 +16,7 @@ ide/core/core.jar
 software/platform/build
 software/platform/project*
 software/rt-thread
+
+/software/cores/rtconfig.py
+/software/platform/rtconfig.py
+/software/platform/applications/application.c
