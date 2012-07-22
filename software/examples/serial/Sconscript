@@ -1,0 +1,11 @@
+import rtconfig
+from building import *
+Import('env')
+
+src = Glob('*.cpp')
+cwd = GetCurrentDir()
+
+CPPPATH = [cwd]
+group = DefineGroup('', src, depend = [''], CPPPATH=CPPPATH)
+
+Return('group')
