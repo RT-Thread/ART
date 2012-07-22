@@ -78,10 +78,8 @@ app = GetOption('app')
 
 if GetOption('type') == 'ext':
     linkflags = rtconfig.LFLAGS + ' -e 0'
-elif GetOption('type') == 'native':
-    linkflags = rtconfig.LFLAGS + ' -e main'
 else:
-    linkflags = rtconfig.LFLAGS + ' -e main -larduino'
+    linkflags = rtconfig.LFLAGS + ' -e main -lcore'
 
 sconstruct = File('SConstruct')
 fn = sconstruct.rfile()
@@ -93,14 +91,15 @@ env = Environment(tools = ['mingw'],
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
         CXX = rtconfig.CXX, AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = linkflags,
-        LIBPATH = [os.path.join(building_dir, '..', 'libraries')],
+        LIBPATH = [os.path.join(building_dir, '..', 'cores')],
         CPPPATH = [os.path.join(building_dir, '..', 'platform'), 
-                os.path.join(building_dir, '..', 'libraries'), 
-                os.path.join(building_dir, '..', 'libraries', 'arduino'), 
+                os.path.join(building_dir, '..', 'cores'), 
+                os.path.join(building_dir, '..', 'cores', 'arduino'), 
                 RTT_ROOT + '/include',
                 RTT_ROOT + '/components/finsh',
                 RTT_ROOT + '/components/dfs', 
                 RTT_ROOT + '/components/dfs/include',
+                RTT_ROOT + '/components/drivers/include',
                 RTT_ROOT + '/components/libc/newlib',
                 ])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
