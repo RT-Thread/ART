@@ -254,22 +254,21 @@ public class Compiler implements MessageConsumer {
 		// 4. link it all together into the .elf file
 		sketch.setCompilingProgress(60);
 		List baseCommandLinker = new ArrayList(Arrays.asList(new String[] {
-				toolchainBasePath + "arm-none-eabi-g++", "-Os",
-				"-mthumb", "-Wl,-z,max-page-size=0x4", "-shared",
-				"-fPIC", "-Bstatic", "-e", "main", 
-				"-nostdlib","-lgcc",
-				"-mcpu=" + boardPreferences.get("build.mcu"), "-o",
-				buildPath + File.separator + this.primaryClassName + ".mo" }));
+				toolchainBasePath + "arm-none-eabi-gcc", "-Os",
+				"-o", buildPath + File.separator + this.primaryClassName + ".mo",
+				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb", 
+				"-Wl,-z,max-page-size=0x4", "-shared",
+				"-fPIC", "-e", "main", "-nostdlib"}));
 
 		for (File file : objectFiles) {
 			baseCommandLinker.add(file.getAbsolutePath());
 		}
 
-		baseCommandLinker.add(runtimeLibraryName);
-		// if (libcorePath != null)
-		//	baseCommandLinker.add("-L" + libcorePath);
-		// else
-		//	baseCommandLinker.add("-L" + buildPath);
+		/* link with static library */
+		baseCommandLinker.add("-static");
+		baseCommandLinker.add("-lcore");
+		baseCommandLinker.add("-lsupc++");
+		baseCommandLinker.add("-L" + libcorePath);
 		baseCommandLinker.add("-lm");
 
 		execAsynchronously(baseCommandLinker);
