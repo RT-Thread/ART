@@ -115,5 +115,9 @@ size_t HardwareSerial::write(uint8_t c)
 	return rt_device_write(RT_DEVICE(serial), -1, &c, 1);
 }
 
+HardwareSerial::operator bool() {
+	return true;
+}
+
 // Preinstantiate Objects //////////////////////////////////////////////////////
 HardwareSerial Serial("vcom");

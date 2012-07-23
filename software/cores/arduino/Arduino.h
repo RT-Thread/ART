@@ -6,10 +6,6 @@
 #include <math.h>
 #include <inttypes.h>
 
-// #include <avr/pgmspace.h>
-// #include <avr/io.h>
-// #include <avr/interrupt.h>
-
 #include "binary.h"
 
 #ifdef __cplusplus
@@ -21,6 +17,7 @@ extern "C"{
 
 #define INPUT 0x0
 #define OUTPUT 0x1
+#define INPUT_PULLUP 0x2
 
 #define true 0x1
 #define false 0x0
@@ -101,7 +98,6 @@ int digitalRead(uint8_t);
 int analogRead(uint8_t);
 void analogReference(uint8_t mode);
 void analogWrite(uint8_t, int);
-void tone(uint8_t, uint16_t, unsigned long);
 
 unsigned long millis(void);
 unsigned long micros(void);
@@ -201,6 +197,7 @@ uint16_t makeWord(byte h, byte l);
 
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);
 
+void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0);
 void noTone(uint8_t _pin);
 
 // WMath prototypes
