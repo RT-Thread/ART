@@ -20,9 +20,9 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 
 DEVICE = ' -mcpu=cortex-m4'
-CFLAGS = DEVICE + ' -mthumb -mlong-calls -O0 -fPIC -fno-exceptions'
+CFLAGS = DEVICE + ' -mthumb -mlong-calls -O2 -Os -fPIC -fno-exceptions'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-LFLAGS = DEVICE + ' -mthumb -Wl,-z,max-page-size=0x4 -shared -fPIC -e main -nostdlib'
+LFLAGS = DEVICE + ' -mthumb -Wl,-z,max-page-size=0x4 -shared -fPIC -nostdlib'
 
 CPATH = ''
 LPATH = ''

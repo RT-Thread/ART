@@ -79,7 +79,7 @@ app = GetOption('app')
 if GetOption('type') == 'ext':
     linkflags = rtconfig.LFLAGS + ' -e 0'
 else:
-    linkflags = rtconfig.LFLAGS + ' -e main -lcore'
+    linkflags = rtconfig.LFLAGS + ' -static -e main -lcore -lsupc++'
 
 sconstruct = File('SConstruct')
 fn = sconstruct.rfile()
@@ -113,5 +113,9 @@ PrepareModuleBuilding(env, RTT_ROOT)
 objs = SConscript(os.path.join(app, 'Sconscript'))
 TARGET = os.path.join('root', app + '.' + rtconfig.TARGET_EXT)
 
+# change link order 
+env['LINKCOM'] = '$LINK $SOURCES -o $TARGET $LINKFLAGS $__RPATH $_LIBDIRFLAGS $_LIBFLAGS'
+
 # build program 
 env.Program(TARGET, objs)
+
