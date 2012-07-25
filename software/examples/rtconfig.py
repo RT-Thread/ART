@@ -4,7 +4,7 @@ import os
 BSP = 'stm32f40x'
 
 # toolchains
-EXEC_PATH = 'D:/pxxiong/Tools/RDT/eclipse/arm/bin'
+EXEC_PATH = 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
