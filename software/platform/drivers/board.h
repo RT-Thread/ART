@@ -15,6 +15,10 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <rtthread.h>
 #include <stm32f4xx.h>
 
@@ -51,5 +55,9 @@ void rt_hw_usart_init(void);
 
 rt_uint32_t rt_hw_tick_get_microsecond(void);
 rt_uint32_t rt_hw_tick_get_millisecond(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
