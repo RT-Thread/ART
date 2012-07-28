@@ -18,5 +18,6 @@ software/platform/project*
 software/rt-thread
 
 /software/cores/rtconfig.py
+/software/examples/rtconfig.py
 /software/platform/rtconfig.py
 /software/platform/applications/application.c
