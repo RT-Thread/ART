@@ -114,7 +114,7 @@ objs = SConscript(os.path.join(app, 'Sconscript'))
 TARGET = os.path.join('root', app + '.' + rtconfig.TARGET_EXT)
 
 # change link order 
-env['LINKCOM'] = '$LINK $SOURCES -o $TARGET $LINKFLAGS $__RPATH $_LIBDIRFLAGS $_LIBFLAGS'
+env['LINKCOM'] = '$LINK start.lib $SOURCES -o $TARGET $LINKFLAGS $__RPATH $_LIBDIRFLAGS $_LIBFLAGS'
 
 # build program 
 env.Program(TARGET, objs)

@@ -35,11 +35,6 @@
 
 HardwareSerial::HardwareSerial(const char* name)
 {
-	if (serial != RT_NULL)
-	{
-		rt_device_close(RT_DEVICE(serial));
-	}
-
 	serial = (struct rt_serial_device*)rt_device_find(name);
 	if (serial != RT_NULL)
 	{
