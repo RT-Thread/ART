@@ -145,7 +145,7 @@ public class Compiler implements MessageConsumer {
 					includePaths.add(filePath);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}				
+				}
 			}
 		}
 
@@ -260,6 +260,7 @@ public class Compiler implements MessageConsumer {
 				"-Wl,-z,max-page-size=0x4", "-shared",
 				"-fPIC", "-e", "main", "-nostdlib"}));
 
+		baseCommandLinker.add("-lstart");
 		for (File file : objectFiles) {
 			baseCommandLinker.add(file.getAbsolutePath());
 		}
@@ -268,8 +269,9 @@ public class Compiler implements MessageConsumer {
 		baseCommandLinker.add("-static");
 		baseCommandLinker.add("-lcore");
 		baseCommandLinker.add("-lsupc++");
-		baseCommandLinker.add("-L" + libcorePath);
 		baseCommandLinker.add("-lm");
+		baseCommandLinker.add("-lend");
+		baseCommandLinker.add("-L" + libcorePath);
 
 		execAsynchronously(baseCommandLinker);
 		sketch.setCompilingProgress(70);
@@ -689,6 +691,7 @@ public class Compiler implements MessageConsumer {
 		List baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
 				toolchainBasePath + "arm-none-eabi-gcc",
 				"-c", // compile, don't link
+				"-O2", // optimized compiling
 				"-Os", // optimize for size
 				// show warnings if verbose 
 				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
@@ -717,6 +720,7 @@ public class Compiler implements MessageConsumer {
 		List baseCommandCompilerCPP = new ArrayList(Arrays.asList(new String[] {
 				toolchainBasePath + "arm-none-eabi-g++",
 				"-c", // compile, don't link
+				"-O2", // optimized compiling
 				"-Os", // optimize for size
 				// show warnings if verbos
 				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
