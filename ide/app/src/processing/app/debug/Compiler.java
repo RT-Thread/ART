@@ -254,7 +254,7 @@ public class Compiler implements MessageConsumer {
 		// 4. link it all together into the .elf file
 		sketch.setCompilingProgress(60);
 		List baseCommandLinker = new ArrayList(Arrays.asList(new String[] {
-				toolchainBasePath + "arm-none-eabi-gcc", "-Os",
+				toolchainBasePath + "arm-none-eabi-gcc", 
 				"-o", buildPath + File.separator + this.primaryClassName + ".mo",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb", 
 				"-Wl,-z,max-page-size=0x4", "-shared",
@@ -268,7 +268,6 @@ public class Compiler implements MessageConsumer {
 		/* link with static library */
 		baseCommandLinker.add("-static");
 		baseCommandLinker.add("-lcore");
-		baseCommandLinker.add("-lsupc++");
 		baseCommandLinker.add("-lm");
 		baseCommandLinker.add("-lend");
 		baseCommandLinker.add("-L" + libcorePath);
@@ -665,8 +664,6 @@ public class Compiler implements MessageConsumer {
 		List baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
 				toolchainBasePath + "arm-none-eabi-gcc",
 				"-c", // compile, don't link
-				// "-g", // include debugging info (so errors include line numbers)
-				"-Os",
 				"-assembler-with-cpp",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb",
 				"-mlong-calls", "-fPIC", "-fno-exceptions",
@@ -692,7 +689,6 @@ public class Compiler implements MessageConsumer {
 				toolchainBasePath + "arm-none-eabi-gcc",
 				"-c", // compile, don't link
 				"-O2", // optimized compiling
-				"-Os", // optimize for size
 				// show warnings if verbose 
 				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
 				// "-ffunction-sections", // place each function in its own section
@@ -721,7 +717,6 @@ public class Compiler implements MessageConsumer {
 				toolchainBasePath + "arm-none-eabi-g++",
 				"-c", // compile, don't link
 				"-O2", // optimized compiling
-				"-Os", // optimize for size
 				// show warnings if verbos
 				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
 				"-fno-exceptions",
