@@ -4,10 +4,8 @@ extern "C"{
 int __main(void);
 }
 
-void (*init_end[1])(void)
-  __attribute__((section(".init_array"))) = { (void (*)())0 };
-
 extern void (*init_start[1])(void);
+extern void (*init_end[1])(void);
 
 static void construct(void)
 {
