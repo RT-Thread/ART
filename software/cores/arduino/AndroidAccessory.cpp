@@ -50,10 +50,12 @@ int AndroidAccessory::read(void *buff, int len)
 {
 	if(device != RT_NULL)
 		return rt_device_read(device, 0, buff, len);
+	return 0;
 }
 
 int AndroidAccessory::write(void *buff, int len)
 {
 	if(device != RT_NULL)
 		return rt_device_write(device, 0, buff, len);
+	return 0;
 }
