@@ -24,8 +24,14 @@
 
 #include "wiring_private.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern unsigned long rt_hw_tick_get_millisecond(void);
 extern unsigned long rt_hw_tick_get_microsecond(void);
+#ifdef __cplusplus
+}
+#endif
 
 unsigned long millis()
 {
