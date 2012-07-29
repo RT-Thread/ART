@@ -20,7 +20,7 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 
 DEVICE = ' -mcpu=cortex-m4'
-CFLAGS = DEVICE + ' -mthumb -mlong-calls -O2 -Os -fPIC -fno-exceptions -fno-rtti'
+CFLAGS = DEVICE + ' -mthumb -mlong-calls -O2 -fPIC -fno-exceptions -fno-rtti'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
 LFLAGS = DEVICE + ' -mthumb -Wl,-z,max-page-size=0x4 -shared -fPIC -nostdlib'
 

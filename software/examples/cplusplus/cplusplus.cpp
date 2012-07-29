@@ -18,5 +18,7 @@ CTest t(10, 100);
 
 int main(void)
 {
+	construct();
+
 	rt_kprintf("t.a = %d, t.b = %d\n", t.a, t.b);
 }

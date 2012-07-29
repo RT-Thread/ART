@@ -208,6 +208,8 @@ long map(long, long, long, long, long);
 
 #endif
 
+void construct(void);
+
 #include "pins_arduino.h"
 #include <rtthread.h>
 
