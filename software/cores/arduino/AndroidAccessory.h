@@ -17,6 +17,9 @@
 #ifndef __AndroidAccessory_h__
 #define __AndroidAccessory_h__
 
+#include <rtthread.h>
+#include <rtdevice.h>
+
 class AndroidAccessory {
 private:
     const char *manufacturer;

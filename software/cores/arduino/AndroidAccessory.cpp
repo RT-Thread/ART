@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <AndroidAccessory.h>
 
 AndroidAccessory::AndroidAccessory(const char *manufacturer,
