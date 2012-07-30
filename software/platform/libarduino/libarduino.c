@@ -105,7 +105,7 @@ pin_to_timer_index_t pin_to_timer_index[] =
 	{TIM9, RCC_APB2Periph_TIM9, TIM_Channel_1, GPIO_PinSource5, GPIO_AF_TIM9},
 };
 
-inline pin_to_timer_index_t *pin_to_timer(uint8_t pin)
+rt_inline pin_to_timer_index_t *pin_to_timer(uint8_t pin)
 {
 	if (pin >= ITEM_NUM(pin_to_timer_index))
 		return RT_NULL;
@@ -143,7 +143,7 @@ pin_to_analog_index_t pin_to_analog_index[] =
 	{RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_2, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_12}
 };
 
-inline pin_to_analog_index_t *pin_to_analog(uint8_t pin)
+rt_inline pin_to_analog_index_t *pin_to_analog(uint8_t pin)
 {
 	if (pin >= ITEM_NUM(pin_to_analog_index))
 		return RT_NULL;
