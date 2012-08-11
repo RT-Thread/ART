@@ -71,33 +71,33 @@ static void thread_entry(void* parameter)
         dfs_romfs_init();
 #endif
 
-    	if (dfs_mount(RT_NULL, "/", "rom", 0, DFS_ROMFS_ROOT) == 0)
-    	{
-    		rt_kprintf("ROM File System initialized!\n");
-    		{
-    		    do_init();
+        if (dfs_mount(RT_NULL, "/", "rom", 0, DFS_ROMFS_ROOT) == 0)
+        {
+            rt_kprintf("ROM File System initialized!\n");
+            {
+                do_init();
                 rt_thread_delay(RT_TICK_PER_SECOND);
-    		}
-    	}
-    	else
-    		rt_kprintf("ROM File System initialzation failed!\n");
+            }
+        }
+        else
+            rt_kprintf("ROM File System initialzation failed!\n");
     }
 #endif
 
-	usbd_hw_init();
-	/* set console and finsh to USB vcom */
+    usbd_hw_init();
+    /* set console and finsh to USB vcom */
 #ifdef RT_USING_CONSOLE
-	rt_console_set_device("vcom");
+    rt_console_set_device("vcom");
 #endif
 #ifdef RT_USING_FINSH
-	finsh_set_device("vcom");
+    finsh_set_device("vcom");
 #endif
 #ifdef RT_USING_USB_HOST
-	rt_usb_host_init();
+    rt_usb_host_init();
     /* register stm32 usb host controller driver */
     rt_hw_susb_init();
 
-	rt_device_init_all();
+    rt_device_init_all();
 #endif
 }
 
@@ -106,15 +106,15 @@ int rt_application_init(void)
     rt_thread_t tid;
 
     tid = rt_thread_create("sys_led",
-    		led_thread_entry, RT_NULL,
-    		2048, RT_THREAD_PRIORITY_MAX-1, 2);
+                           led_thread_entry, RT_NULL,
+                           2048, RT_THREAD_PRIORITY_MAX-2, 2);
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);
 
     tid = rt_thread_create("init",
-    		thread_entry, RT_NULL,
-    		2048, RT_THREAD_PRIORITY_MAX/3, 20);
+                           thread_entry, RT_NULL,
+                           2048, RT_THREAD_PRIORITY_MAX/3, 20);
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);
