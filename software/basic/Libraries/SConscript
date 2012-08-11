@@ -1,0 +1,49 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
+""")
+
+src += Glob('STM32F4xx_StdPeriph_Driver/src/*.c')
+
+#add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f4xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+     src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f4xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+     src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f4xx.s']
+
+path = [cwd + '/STM32F4xx_StdPeriph_Driver/inc', 
+    cwd + '/CMSIS/Device/ST/STM32F4xx/Include',
+    cwd + '/CMSIS/Include']
+
+# source files for USB device library
+usb_src = Split('''
+STM32_USB_Device_Library/Core/src/usbd_core.c
+STM32_USB_Device_Library/Core/src/usbd_ioreq.c
+STM32_USB_Device_Library/Core/src/usbd_req.c
+STM32_USB_OTG_Driver/src/usb_core.c
+STM32_USB_OTG_Driver/src/usb_dcd.c
+STM32_USB_OTG_Driver/src/usb_dcd_int.c
+STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.c
+''')
+
+usb_path = [cwd + '/STM32_USB_Device_Library/Core/inc',
+    cwd + '/STM32_USB_OTG_Driver/inc',
+    cwd + '/STM32_USB_Device_Library/Class/cdc/inc']
+
+# add USB related source code 
+path += usb_path
+src += usb_src
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
