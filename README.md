@@ -1,5 +1,8 @@
 ART is an Arduino like board with STM32F407VGT6 (ARM Cortex-M4) chip. 
 RT-Thread RTOS is running as a platform in this board.
+- Arduino hardware/software compatible.
+- 32bit ARM Cortex-M4 with FPU.
+- Running multi-Arduino Program in parallel.
 
 Hardware Information
 --------------------
