@@ -61,6 +61,10 @@
 #define RT_USING_SERIAL
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE	64
+// <section name="RT_USING_I2C" description="Using I2C in Device Driver Framework" default="true" >
+#define RT_USING_I2C
+// <section name="RT_USING_I2C_BITOPS" description="Using BITOPS in I2C Driver" default="true" >
+#define RT_USING_I2C_BITOPS
 // </section>
 
 // </section>
