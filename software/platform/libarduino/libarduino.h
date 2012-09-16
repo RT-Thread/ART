@@ -10,6 +10,10 @@
 #define OUTPUT 0x1
 #define INPUT_PULLUP 0x2
 
+#define CHANGE 1
+#define FALLING 2
+#define RISING 3
+
 #define EXTERNAL_INT_0 0
 #define EXTERNAL_INT_1 1
 #define EXTERNAL_INT_2 2
