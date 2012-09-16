@@ -162,14 +162,15 @@ void pinMode(uint8_t pin, uint8_t mode)
 	    /* GPIO Periph clock enable */
 	    RCC_AHB1PeriphClockCmd(index->rcc, ENABLE);
 
-	    /* Configure PE5 */
+	    /* Configure GPIO_InitStructure */
 	    GPIO_InitStructure.GPIO_Pin = index->pin;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+
 	    if (mode == OUTPUT)
 	    {
 	    	/* output setting */
 			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-			GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 			GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	    }
 	    else
