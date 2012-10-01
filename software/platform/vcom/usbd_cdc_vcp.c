@@ -159,7 +159,7 @@ static int usb_vcom_getc(struct rt_serial_device *serial)
 	result = -1;
 
 	level = rt_hw_interrupt_disable();
-	if (rt_ringbuffer_available_size(&vcp_rx_ringbuffer))
+	if (RT_RINGBUFFER_SIZE(&vcp_rx_ringbuffer))
 	{
 		rt_ringbuffer_getchar(&vcp_rx_ringbuffer, &ch);
 		result = ch;
