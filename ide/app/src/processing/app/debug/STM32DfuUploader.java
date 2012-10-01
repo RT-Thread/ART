@@ -121,16 +121,22 @@ public class STM32DfuUploader extends Uploader  {
   }
 
   protected boolean burnBootloader(Collection params) throws RunnerException {
-	  if ((new File(Base.getTarget().getFolder().getAbsolutePath() + File.separator + "rtthread.bin")).exists()) {
-	      params.add("-s");
-	      params.add("0x08000000");
-	      params.add("-D");
-	      params.add(Base.getTarget().getFolder().getAbsolutePath() + File.separator + "rtthread.bin");
-
-		  return dfu(params);
+	  String bootloader_path;
+	  
+	  bootloader_path = Base.getTarget().getFolder().getAbsolutePath() + File.separator + "rtthread.bin";
+	  try {
+		  if ((new File(bootloader_path)).exists()) {
+		      params.add("-s");
+		      params.add("0x08000000");
+		      params.add("-D");
+		      params.add(Base.getTarget().getFolder().getAbsolutePath() + File.separator + "rtthread.bin");
+	
+			  return dfu(params);
+		  }
+	  } catch (RunnerException e) {
+		  System.err.println(bootloader_path + " is missing. Please choose ART board and try again!");
 	  }
 
-	  System.err.println("rtthread.bin is missing");
 	  return false;
   }
 
