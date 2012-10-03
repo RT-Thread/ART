@@ -248,7 +248,7 @@ void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOE, &GPIO_InitStructure);
+	GPIO_Init(pin_index_p->gpio, &GPIO_InitStructure);
 	/* Connect TIM3 pins to AF */
 	GPIO_PinAFConfig(pin_index_p->gpio, timer_index->pin_source, timer_index->gpio_af);
 
