@@ -14,7 +14,7 @@ struct pin_index
 
 #define ITEM_NUM(items)	sizeof(items)/sizeof(items[0])
 
-struct pin_index pins[] =
+static const struct pin_index pins[] =
 {
     { 0, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_7},
     { 1, RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_6},
@@ -85,7 +85,7 @@ typedef struct
 } pin_to_timer_index_t;
 
 #define NOT_A_TIM RT_NULL
-pin_to_timer_index_t pin_to_timer_index[] =
+static const pin_to_timer_index_t pin_to_timer_index[] =
 {
     /* 0  */ {NOT_A_TIM},
     /* 1  */ {NOT_A_TIM},
@@ -106,7 +106,7 @@ pin_to_timer_index_t pin_to_timer_index[] =
 };
 static uint32_t pwm_frequency[14];
 
-rt_inline pin_to_timer_index_t *pin_to_timer(uint8_t pin)
+rt_inline const pin_to_timer_index_t *pin_to_timer(uint8_t pin)
 {
     if (pin >= ITEM_NUM(pin_to_timer_index))
         return RT_NULL;
@@ -220,13 +220,11 @@ FINSH_FUNCTION_EXPORT(digitalRead, read value from digital pin);
 
 void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned int clock)
 {
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_OCInitTypeDef TIM_OCInitStructure;
     uint16_t APBx_Prescaler;
     uint16_t PrescalerValue;
-    GPIO_InitTypeDef GPIO_InitStructure;
-    pin_to_timer_index_t *timer_index;
-    struct pin_index *pin_index_p;
+    const pin_to_timer_index_t *timer_index;
+    const struct pin_index *pin_index_p;
     uint32_t period = clock / frequency - 1;
 
     RT_ASSERT(period <= UINT16_MAX);
@@ -256,12 +254,15 @@ void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned
     RCC_AHB1PeriphClockCmd(pin_index_p->rcc, ENABLE);
 
     /* GPIO configuration */
-    GPIO_InitStructure.GPIO_Pin = pin_index_p->pin;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(pin_index_p->gpio, &GPIO_InitStructure);
+    {
+        GPIO_InitTypeDef GPIO_InitStructure;
+        GPIO_InitStructure.GPIO_Pin = pin_index_p->pin;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+        GPIO_Init(pin_index_p->gpio, &GPIO_InitStructure);
+    }
     /* Connect TIM3 pins to AF */
     GPIO_PinAFConfig(pin_index_p->gpio, timer_index->pin_source, timer_index->gpio_af);
 
@@ -273,6 +274,7 @@ void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned
     /* Time base configuration */
     if(pwm_frequency[pin] != frequency)
     {
+        TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
         TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
         TIM_TimeBaseStructure.TIM_Period = period;
         TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
@@ -387,7 +389,7 @@ FINSH_FUNCTION_EXPORT(analogRead, Reads the value from the specified analog pin)
 
 void noTone(uint8_t pin)
 {
-    pin_to_timer_index_t *index_p = pin_to_timer(pin);
+    const pin_to_timer_index_t *index_p = pin_to_timer(pin);
     if (index_p)
     {
         TIM_Cmd(index_p->tim, DISABLE);
@@ -396,7 +398,6 @@ void noTone(uint8_t pin)
     }
 }
 FINSH_FUNCTION_EXPORT(noTone, Stops the generation of a square wave triggered by tone());
-
 
 /* normally the tone frequency should be 31 to 4978, refer to piches.h */
 void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
