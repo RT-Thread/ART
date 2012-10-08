@@ -34,11 +34,11 @@
 void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
-	/* Set the Vector Table base location at 0x20000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+    /* Set the Vector Table base location at 0x20000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
 #else  /* VECT_TAB_FLASH  */
-	/* Set the Vector Table base location at 0x08000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+    /* Set the Vector Table base location at 0x08000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -50,13 +50,13 @@ void NVIC_Configuration(void)
  */
 void SysTick_Handler(void)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_tick_increase();
+    rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 static void gpio_init(void)
@@ -67,23 +67,28 @@ static void gpio_init(void)
 
         RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 
-	    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
-	    /* output setting */
-		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
-		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-		GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
-		GPIO_Init(GPIOC, &GPIO_InitStructure);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
+        /* output setting */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+        GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
-		/* output setting */
-		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
-		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-		GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
-		GPIO_Init(GPIOC, &GPIO_InitStructure);
-		GPIO_ResetBits(GPIOC, GPIO_Pin_15);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+        /* output setting */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+        GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+        GPIO_ResetBits(GPIOC, GPIO_Pin_15);
     }
+}
+
+static void idle_hook(void)
+{
+    __WFI();
 }
 
 /**
@@ -91,17 +96,25 @@ static void gpio_init(void)
  */
 void rt_hw_board_init()
 {
+    rt_thread_idle_sethook(idle_hook);
+
     gpio_init();
 
-	/* NVIC Configuration */
-	NVIC_Configuration();
+    /* SYSTEM config. */
+    {
+        /* Enable SYSCFG clock */
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+    }
 
-	/* Configure the SysTick */
-	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+    /* NVIC Configuration */
+    NVIC_Configuration();
 
-	rt_hw_usart_init();
+    /* Configure the SysTick */
+    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+
+    rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
-	rt_console_set_device(CONSOLE_DEVICE);
+    rt_console_set_device(CONSOLE_DEVICE);
 #endif
 }
 
@@ -115,13 +128,13 @@ void rt_hw_board_init()
  */
 rt_uint32_t rt_hw_tick_get_millisecond(void)
 {
-	rt_tick_t tick;
-	rt_uint32_t value;
+    rt_tick_t tick;
+    rt_uint32_t value;
 
-	tick = rt_tick_get();
-	value = tick * TICK_MS + (SysTick->LOAD - SysTick->VAL) * TICK_MS / SysTick->LOAD;
+    tick = rt_tick_get();
+    value = tick * TICK_MS + (SysTick->LOAD - SysTick->VAL) * TICK_MS / SysTick->LOAD;
 
-	return value;
+    return value;
 }
 
 /**
@@ -129,13 +142,13 @@ rt_uint32_t rt_hw_tick_get_millisecond(void)
  */
 rt_uint32_t rt_hw_tick_get_microsecond(void)
 {
-	rt_tick_t tick;
-	rt_uint32_t value;
+    rt_tick_t tick;
+    rt_uint32_t value;
 
-	tick = rt_tick_get();
-	value = tick * TICK_US + (SysTick->LOAD - SysTick->VAL) * TICK_US / SysTick->LOAD;
+    tick = rt_tick_get();
+    value = tick * TICK_US + (SysTick->LOAD - SysTick->VAL) * TICK_US / SysTick->LOAD;
 
-	return value;
+    return value;
 }
 
 RTM_EXPORT(rt_hw_tick_get_millisecond);
