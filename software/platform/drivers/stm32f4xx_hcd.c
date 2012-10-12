@@ -21,6 +21,8 @@
 #include "usbh_hcs.h"
 #include "usb_bsp.h"
 
+#ifdef RT_USING_USB_HOST
+
 static struct uhcd susb_hcd;
 static struct uhubinst root_hub;
 static rt_bool_t ignore_disconnect = RT_FALSE;
@@ -323,7 +325,7 @@ USBH_Status USBH_DeInit(USB_OTG_CORE_HANDLE *pdev, USBH_HOST *phost)
   */
 rt_uint8_t susb_connect (USB_OTG_CORE_HANDLE *pdev)
 {
-    struct umsg msg;
+    struct uhost_msg msg;
 
     pdev->host.ConnSts = 1;
 
@@ -348,7 +350,7 @@ rt_uint8_t susb_connect (USB_OTG_CORE_HANDLE *pdev)
     root_hub.port_status[0] |= (PORT_CCS | PORT_CCSC);
     msg.type = USB_MSG_CONNECT_CHANGE;
     msg.content.uhub = &root_hub;
-    rt_usb_post_event(&msg, sizeof(struct umsg));    
+    rt_usb_post_event(&msg, sizeof(struct uhost_msg));    
 
     return 0;
 }
@@ -361,7 +363,7 @@ rt_uint8_t susb_connect (USB_OTG_CORE_HANDLE *pdev)
   */
 rt_uint8_t susb_disconnect (USB_OTG_CORE_HANDLE *pdev)
 {    
-    struct umsg msg;
+    struct uhost_msg msg;
 
     pdev->host.ConnSts = 0;
 
@@ -375,7 +377,7 @@ rt_uint8_t susb_disconnect (USB_OTG_CORE_HANDLE *pdev)
     root_hub.port_status[0] &= ~PORT_CCS;
     msg.type = USB_MSG_CONNECT_CHANGE;
     msg.content.uhub = &root_hub;
-    rt_usb_post_event(&msg, sizeof(struct umsg));    
+    rt_usb_post_event(&msg, sizeof(struct uhost_msg));    
 
     return 0;
 }
@@ -774,3 +776,6 @@ void rt_hw_susb_init(void)
     
     rt_device_register(&susb_hcd.parent, "susb", 0);    
 }
+
+#endif
+

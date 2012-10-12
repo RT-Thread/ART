@@ -84,13 +84,20 @@ static void thread_entry(void* parameter)
     }
 #endif
 
-    usbd_hw_init();
-    /* set console and finsh to USB vcom */
+#ifdef RT_USING_USB_DEVICE
+    /* usb device controller driver initilize */
+    rt_hw_stm32_usbd_init();
+
+    rt_usb_device_init("stusb");
+
+    rt_usb_vcom_init();
+
 #ifdef RT_USING_CONSOLE
     rt_console_set_device("vcom");
 #endif
 #ifdef RT_USING_FINSH
     finsh_set_device("vcom");
+#endif
 #endif
 #ifdef RT_USING_USB_HOST
     rt_usb_host_init();

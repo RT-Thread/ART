@@ -85,6 +85,10 @@
 //#define UDISK_MOUNTPOINT	"/"
 // </section>
 
+// <section name="RT_USING_USB_DEVICE" description="USB Device stack" default="true" >
+#define RT_USING_USB_DEVICE
+// </section>
+
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
