@@ -67,8 +67,6 @@
 #define RT_USING_I2C_BITOPS
 // </section>
 
-// </section>
-
 // <section name="RT_USING_USB_HOST" description="USB Host stack" default="true" >
 #define RT_USING_USB_HOST
 // <bool name="RT_USB_CLASS_MASS_STORAGE" description="Using USB mass storage class" default="true" />
@@ -93,7 +91,15 @@
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
+// <string name="RT_CONSOLEBUF_SIZE" description="The device name for console output" default="vcom">
+// <item name="USB virtual serial">"vcom"</item>
+// <item name="UART1">"uart1"</item>
+// </string>
+#define RT_CONSOLE_DEVICE_NAME "vcom"
 // </section>
+
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using components manager" default="true" />
+#define RT_USING_COMPONENTS_INIT
 
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
@@ -138,6 +144,68 @@
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="true" />
 #define RT_USING_DFS_ROMFS
 // </section>
+
+// <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
+// #define RT_USING_LWIP
+// <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
+#define RT_LWIP_ICMP
+// <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
+// #define RT_LWIP_IGMP
+// <bool name="RT_LWIP_UDP" description="Enable UDP protocol" default="true" />
+#define RT_LWIP_UDP
+// <bool name="RT_LWIP_TCP" description="Enable TCP protocol" default="true" />
+#define RT_LWIP_TCP
+// <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
+#define RT_LWIP_DNS
+// <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
+#define RT_LWIP_PBUF_NUM	4
+// <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
+#define RT_LWIP_TCP_PCB_NUM	3
+// <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
+#define RT_LWIP_TCP_SND_BUF	2048
+// <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
+#define RT_LWIP_TCP_WND	2048
+// <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
+// #define RT_LWIP_SNMP
+// <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
+// #define RT_LWIP_DHCP
+// <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
+#define RT_LWIP_TCP_SEG_NUM	4
+// <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
+#define RT_LWIP_TCPTHREAD_PRIORITY	12
+// <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
+// <integer name="RT_LWIP_TCPTHREAD_STACKSIZE" description="the thread stack size of TCP thread" default="4096" />
+#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
+// <integer name="RT_LWIP_ETHTHREAD_PRIORITY" description="the thread priority of ethnetif thread" default="144" />
+#define RT_LWIP_ETHTHREAD_PRIORITY	14
+// <integer name="RT_LWIP_ETHTHREAD_MBOX_SIZE" description="the mail box size of ethnetif thread to wait for" default="8" />
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
+// <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
+#define RT_LWIP_ETHTHREAD_STACKSIZE	512
+// <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
+#define RT_LWIP_IPADDR0 192
+#define RT_LWIP_IPADDR1 168
+#define RT_LWIP_IPADDR2 1
+#define RT_LWIP_IPADDR3 30
+// <ipaddr name="RT_LWIP_GWADDR" description="Gateway address of device" default="192.168.1.1" />
+#define RT_LWIP_GWADDR0 192
+#define RT_LWIP_GWADDR1 168
+#define RT_LWIP_GWADDR2 1
+#define RT_LWIP_GWADDR3 1
+// <ipaddr name="RT_LWIP_MSKADDR" description="Mask address of device" default="255.255.255.0" />
+#define RT_LWIP_MSKADDR0 255
+#define RT_LWIP_MSKADDR1 255
+#define RT_LWIP_MSKADDR2 255
+#define RT_LWIP_MSKADDR3 0
+// </section>
+
+// <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
+// #define RT_USING_CMSIS_OS
+// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
+#define RT_USING_RTT_CMSIS
+// <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
+// #define RT_USING_BSP_CMSIS
 
 // </RDTConfigurator>
 

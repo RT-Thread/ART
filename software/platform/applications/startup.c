@@ -27,10 +27,6 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -72,15 +68,8 @@ void rtthread_startup(void)
 	/* show version */
 	rt_show_version();
 
-	/* initialize timer system */
-	rt_system_timer_init();
-
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void*)STM32_SRAM_BEGIN, (void*)STM32_SRAM_END);
-#endif
-
-#ifdef RT_USING_MODULE
-    rt_system_module_init();
 #endif
 
 	/* initialize scheduler system */
@@ -88,12 +77,6 @@ void rtthread_startup(void)
 
 	/* initialize application */
 	rt_application_init();
-
-#ifdef RT_USING_FINSH
-	/* initialize finsh */
-	finsh_system_init();
-	finsh_set_device( FINSH_DEVICE_NAME );
-#endif
 
     /* initialize timer thread */
     rt_system_timer_thread_init();
