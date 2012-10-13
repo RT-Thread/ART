@@ -86,9 +86,9 @@ static void thread_entry(void* parameter)
 
 #ifdef RT_USING_USB_DEVICE
     /* usb device controller driver initilize */
-    rt_hw_stm32_usbd_init();
+    rt_hw_usbd_init();
 
-    rt_usb_device_init("stusb");
+    rt_usb_device_init("usbd");
 
     rt_usb_vcom_init();
 

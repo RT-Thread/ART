@@ -9,6 +9,8 @@
 #include "usb_dcd.h"
 #include "usb_dcd_int.h"
 
+#ifdef RT_USING_USB_DEVICE
+
 typedef enum {
   USBD_OK   = 0,
   USBD_BUSY,
@@ -17,17 +19,6 @@ typedef enum {
 
 static struct udcd stm32_dcd;
 ALIGN(4) static USB_OTG_CORE_HANDLE USB_OTG_Core;
-
-void OTG_FS_WKUP_IRQHandler(void)
-{
-    if(USB_OTG_Core.cfg.low_power)
-    {
-        *(rt_uint32_t *)(0xE000ED10) &= 0xFFFFFFF9 ;
-        SystemInit();
-        USB_OTG_UngateClock(&USB_OTG_Core);
-    }
-    EXTI_ClearITPendingBit(EXTI_Line18);
-}
 
 void OTG_FS_IRQHandler(void)
 {
@@ -403,7 +394,7 @@ static rt_err_t stm32_dcd_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
     return RT_EOK;
 }
 
-void rt_hw_stm32_usbd_init(void)
+void rt_hw_usbd_init(void)
 {
     stm32_dcd.parent.type = RT_Device_Class_USBDevice;
     stm32_dcd.parent.init = stm32_dcd_init;
@@ -412,6 +403,7 @@ void rt_hw_stm32_usbd_init(void)
     stm32_dcd.ops = &stm32_dcd_ops;
     rt_completion_init(&stm32_dcd.completion);
     
-    rt_device_register(&stm32_dcd.parent, "stusb", 0);    
+    rt_device_register(&stm32_dcd.parent, "usbd", 0);    
 }
 
+#endif
