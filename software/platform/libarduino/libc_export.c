@@ -8,13 +8,17 @@
 
 /* export for libc */
 RTM_EXPORT(memmove);
+RTM_EXPORT(memcpy);
 RTM_EXPORT(atol);
 RTM_EXPORT(tolower);
 RTM_EXPORT(toupper);
 RTM_EXPORT(isspace);
+RTM_EXPORT(strcpy);
 RTM_EXPORT(strrchr);
 RTM_EXPORT(strstr);
+RTM_EXPORT(strlen);
 RTM_EXPORT(strchr);
+RTM_EXPORT(strcmp);
 RTM_EXPORT(strncmp);
 RTM_EXPORT(strncpy);
 RTM_EXPORT(malloc);

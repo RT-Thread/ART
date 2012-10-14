@@ -59,7 +59,6 @@ static void thread_entry(void* parameter)
         {
             rt_kprintf("ROM File System initialized!\n");
             {
-                do_init();
                 rt_thread_delay(RT_TICK_PER_SECOND);
             }
         }
@@ -87,6 +86,8 @@ static void thread_entry(void* parameter)
     /* register stm32 usb host controller driver */
     rt_hw_susb_init();
 #endif
+
+    do_init();
 }
 
 int rt_application_init(void)
