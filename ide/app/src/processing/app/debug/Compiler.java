@@ -314,7 +314,7 @@ public class Compiler implements MessageConsumer {
 				out.write(buffer, 0, num);
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("File not found.");
+			System.out.println("File not found.[" + srcFile + " -> " + dstFile + "]");
 		} catch (IOException e){
 		} finally {
             try {

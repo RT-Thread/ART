@@ -1,0 +1,7 @@
+printf("init.rc for RT-Thread\n");
+printf("Startup applications\n");
+
+// execute all modules on the root directory
+exec_modules("/");
+
+printf("Done!\n");

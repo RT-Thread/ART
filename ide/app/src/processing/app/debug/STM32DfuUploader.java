@@ -154,7 +154,7 @@ public class STM32DfuUploader extends Uploader  {
 		  }
 	  }
 	  else {
-		  mkromfsProgramer = Base.getHardwarePath() + "/tools/arm/bin/" + "mkromfs";
+		  mkromfsProgramer = Base.getHardwarePath() + "/tools/bin/" + "mkromfs";
 	  }
 
 	  List commandBuildRomFS = new ArrayList(Arrays.asList(new String[] {

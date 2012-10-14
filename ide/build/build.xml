@@ -466,7 +466,27 @@
     <copy todir="windows/work">
       <fileset dir="windows/dist" includes="drivers/**" />
     </copy>
-    
+	<mkdir dir="windows/work/hardware/tools" />
+
+    <!-- Unzip ARM tools -->
+    <unzip dest="windows/work/hardware/tools" src="windows/arm_tools.zip" overwrite="false"/>
+    <!-- Unzip DFU tools -->
+    <unzip dest="windows/work/hardware/tools" src="windows/stm32-dfu.zip" overwrite="false"/>
+    <!-- Unzip other tools -->
+    <unzip dest="windows/work/hardware/tools" src="windows/bin.zip" overwrite="false"/>
+	<!-- Copy ART platform -->
+	<mkdir dir="windows/work/hardware/ART" />
+    <copy todir="windows/work/hardware/ART">
+      <fileset dir="../../software" includes="cores/**" />
+      <fileset dir="../../software" includes="examples/**" />
+      <fileset dir="../../software" includes="platform/**" />
+      <fileset dir="../../software" includes="rt-thread/**" />
+      <fileset dir="../../software" includes="root/**" />
+      <fileset dir="../../software" includes="boards.txt" />
+      <fileset dir="../../software" includes="programmers.txt" />
+      <fileset dir="../../software" includes="README.md" />
+    </copy>
+
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
@@ -505,7 +525,6 @@
 
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
-    <!--
     <zip basedir="windows/work" 
 	 prefix="arduino-${version}"
 	 destfile="windows/arduino-${version}.zip" />
@@ -513,7 +532,6 @@
 	 prefix="arduino-${version}"
 	 destfile="windows/arduino-${version}-expert.zip" 
 	 excludes="java/**" />
-    -->
 
     <zip destfile="windows/arduino-${version}-windows.zip">
       <zipfileset dir="windows/work" 
