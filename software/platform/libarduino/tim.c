@@ -1,4 +1,6 @@
 #include <rtthread.h>
+
+#include "libarduino.h"
 #include "tim.h"
 #include "pin_table.h"
 
@@ -6,23 +8,25 @@ static const pin_to_timer_index_t pin_to_timer_index[] =
 {
     /* 0  */ {NOT_A_TIM},
     /* 1  */ {NOT_A_TIM},
-    /* 2  */ {TIM3, RCC_APB1Periph_TIM3, TIM_Channel_3, GPIO_PinSource8, GPIO_AF_TIM3},
-    /* 3  */ {TIM2, RCC_APB1Periph_TIM2, TIM_Channel_4, GPIO_PinSource11, GPIO_AF_TIM2},
-    /* 4  */ {TIM1, RCC_APB2Periph_TIM1, TIM_Channel_4, GPIO_PinSource14, GPIO_AF_TIM1},
+    /* 2  */ {TIM3, RCC_APB1Periph_TIM3, TIM3_IRQn,    TIM_Channel_3, TIM_IT_CC1, GPIO_PinSource8,  GPIO_AF_TIM3},
+    /* 3  */ {TIM2, RCC_APB1Periph_TIM2, TIM2_IRQn,    TIM_Channel_4, TIM_IT_CC1, GPIO_PinSource11, GPIO_AF_TIM2},
+    /* 4  */ {TIM1, RCC_APB2Periph_TIM1, TIM1_CC_IRQn, TIM_Channel_4, TIM_IT_CC1, GPIO_PinSource14, GPIO_AF_TIM1},
 
-    /* 5  */ {TIM1, RCC_APB2Periph_TIM1, TIM_Channel_3, GPIO_PinSource13, GPIO_AF_TIM1},
-    /* 6  */ {TIM1, RCC_APB2Periph_TIM1, TIM_Channel_2, GPIO_PinSource11, GPIO_AF_TIM1},
-    /* 7  */ {TIM1, RCC_APB2Periph_TIM1, TIM_Channel_1, GPIO_PinSource9, GPIO_AF_TIM1},
-    /* 8  */ {TIM4, RCC_APB1Periph_TIM4, TIM_Channel_1, GPIO_PinSource12, GPIO_AF_TIM4},
-    /* 9  */ {TIM4, RCC_APB1Periph_TIM4, TIM_Channel_2, GPIO_PinSource13, GPIO_AF_TIM4},
+    /* 5  */ {TIM1, RCC_APB2Periph_TIM1, TIM1_CC_IRQn, TIM_Channel_3, TIM_IT_CC1, GPIO_PinSource13, GPIO_AF_TIM1},
+    /* 6  */ {TIM1, RCC_APB2Periph_TIM1, TIM1_CC_IRQn, TIM_Channel_2, TIM_IT_CC1, GPIO_PinSource11, GPIO_AF_TIM1},
+    /* 7  */ {TIM1, RCC_APB2Periph_TIM1, TIM1_CC_IRQn, TIM_Channel_1, TIM_IT_CC1, GPIO_PinSource9,  GPIO_AF_TIM1},
+    /* 8  */ {TIM4, RCC_APB1Periph_TIM4, TIM4_IRQn,    TIM_Channel_1, TIM_IT_CC1, GPIO_PinSource12, GPIO_AF_TIM4},
+    /* 9  */ {TIM4, RCC_APB1Periph_TIM4, TIM4_IRQn,    TIM_Channel_2, TIM_IT_CC1, GPIO_PinSource13, GPIO_AF_TIM4},
 
-    /* 10 */ {TIM4, RCC_APB1Periph_TIM4, TIM_Channel_3, GPIO_PinSource14, GPIO_AF_TIM4},
-    /* 11 */ {TIM4, RCC_APB1Periph_TIM4, TIM_Channel_4, GPIO_PinSource15, GPIO_AF_TIM4},
-    /* 12 */ {TIM9, RCC_APB2Periph_TIM9, TIM_Channel_2, GPIO_PinSource6, GPIO_AF_TIM9},
-    /* 13 */ {TIM9, RCC_APB2Periph_TIM9, TIM_Channel_1, GPIO_PinSource5, GPIO_AF_TIM9},
+    /* 10 */ {TIM4, RCC_APB1Periph_TIM4, TIM4_IRQn,    TIM_Channel_3, TIM_IT_CC1, GPIO_PinSource14, GPIO_AF_TIM4},
+    /* 11 */ {TIM4, RCC_APB1Periph_TIM4, TIM4_IRQn,    TIM_Channel_4, TIM_IT_CC1, GPIO_PinSource15, GPIO_AF_TIM4},
+    /* 12 */ {TIM9, RCC_APB2Periph_TIM9, TIM1_CC_IRQn, TIM_Channel_2, TIM_IT_CC1, GPIO_PinSource6,  GPIO_AF_TIM9},
+    /* 13 */ {TIM9, RCC_APB2Periph_TIM9, TIM1_CC_IRQn, TIM_Channel_1, TIM_IT_CC1, GPIO_PinSource5,  GPIO_AF_TIM9},
 };
 
 static uint32_t pwm_frequency[14];
+static struct pulsein_node pulsein_table[14];
+struct rt_event pulsein_event;
 
 #define ITEM_NUM(items)	sizeof(items)/sizeof(items[0])
 const pin_to_timer_index_t *pin_to_timer(uint8_t pin)
@@ -33,7 +37,83 @@ const pin_to_timer_index_t *pin_to_timer(uint8_t pin)
         return pin_to_timer_index + pin;
 }
 
-void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned int clock)
+struct pulsein_node * get_pulsein_node(uint8_t pin)
+{
+    return &pulsein_table[pin];
+};
+
+#define PWM_COUNTER_CLOCK       1000000	// choose a value which will result in proper prescalar value
+#define PWM_FREQUENCY_DEFAULT   1000	// choose a value which will result in proper period
+void TIM_config(uint8_t pin)
+{
+    /* Time base configuration */
+    if(pwm_frequency[pin] != PWM_FREQUENCY_DEFAULT)
+    {
+        TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+        const pin_to_timer_index_t *timer_index;
+        uint16_t APBx_Prescaler;
+        uint16_t PrescalerValue;
+
+        timer_index = pin_to_timer(pin);
+        if(!timer_index || !timer_index->tim)
+        {
+            return;
+        }
+
+        /* TIM clock enable */
+        if( (timer_index->tim == TIM2) || (timer_index->tim == TIM3)
+                || (timer_index->tim == TIM4) )
+        {
+            APBx_Prescaler = 4;
+            RCC_APB1PeriphClockCmd(timer_index->tim_rcc, ENABLE);
+        }
+        else
+        {
+            APBx_Prescaler = 2;
+            RCC_APB2PeriphClockCmd(timer_index->tim_rcc, ENABLE);
+        }
+
+        /* Compute the prescaler value */
+        PrescalerValue = (SystemCoreClock * 2 / APBx_Prescaler / PWM_COUNTER_CLOCK)
+                         - 1;
+        RT_ASSERT(PrescalerValue <= UINT16_MAX);
+        PrescalerValue &= 0XFFFF;
+
+        TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+        TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
+        TIM_TimeBaseStructure.TIM_Period = 0x800;
+        TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+        TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+        TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+        TIM_TimeBaseInit(timer_index->tim, &TIM_TimeBaseStructure);
+        pwm_frequency[pin] = PWM_FREQUENCY_DEFAULT;
+    }
+}
+
+void TIM_NVIC_Configuration(uint8_t pin)
+{
+    const pin_to_timer_index_t *timer_index;
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    timer_index = pin_to_timer(pin);
+    if(!timer_index || !timer_index->tim)
+    {
+        return;
+    }
+
+    /* Enable the TIM5 global Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = timer_index->IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+
+void pwmConfig(uint8_t pin,
+               uint8_t duty_cycle,
+               unsigned int frequency,
+               unsigned int clock)
 {
     TIM_OCInitTypeDef TIM_OCInitStructure;
     uint16_t APBx_Prescaler;
@@ -132,4 +212,107 @@ void pwmConfig(uint8_t pin, uint8_t duty_cycle, unsigned int frequency, unsigned
 
     TIM_ARRPreloadConfig(timer_index->tim, ENABLE);
     TIM_Cmd(timer_index->tim, ENABLE);
+}
+
+/**/
+void TIM1_CC_IRQHandler(void)
+{
+    if(TIM_GetITStatus(TIM1, TIM_IT_CC1) == SET)
+    {
+        uint8_t pin = 7;
+// 				uint32_t tick1,tick2;
+        const pin_to_timer_index_t * timer_index;
+
+        timer_index = pin_to_timer(pin);
+
+        if((pulsein_table[pin].step == 0)
+                && (digitalRead(pin) == pulsein_table[pin].state))
+        {
+            pulsein_table[pin].step = 1;
+            pulsein_table[pin].value = rt_hw_tick_get_microsecond();
+// 						tick1 = pulsein_table[pin].value;
+					//rt_kprintf("%u:%u and ", rt_tick_get(), tick1);
+        }
+        else if(pulsein_table[pin].step == 1)
+        {
+            uint32_t tmp = rt_hw_tick_get_microsecond();
+// 						tick2 = tmp;
+					
+            pulsein_table[pin].step = 2;
+
+            if(tmp < pulsein_table[pin].value)
+            {
+                 pulsein_table[pin].value = (0xFFFFFFFF -  pulsein_table[pin].value) + tmp;
+            }
+// 						TIM_GetCapture1(timer_index->tim);
+            else
+						{
+							pulsein_table[pin].value = tmp - pulsein_table[pin].value;
+						}
+						
+						//rt_kprintf("%u:%u ", rt_tick_get(), tick2);
+            TIM_ITConfig(timer_index->tim, timer_index->TIM_IT, DISABLE);
+            rt_event_send(&pulsein_event, (1 << pin));
+        }
+
+        /* Clear TIM Capture compare interrupt pending bit */
+        TIM_ClearITPendingBit(timer_index->tim, timer_index->TIM_IT);
+    } /* TIM_IT_CC1 */
+
+    if(TIM_GetITStatus(TIM1, TIM_IT_CC2) == SET)
+    {
+        rt_kprintf("TIM_IT_CC2\r\n");
+        /* Clear TIM Capture compare interrupt pending bit */
+        TIM_ClearITPendingBit(TIM1, TIM_IT_CC2);
+    }
+
+    if(TIM_GetITStatus(TIM1, TIM_IT_CC3) == SET)
+    {
+        rt_kprintf("TIM_IT_CC3\r\n");
+        /* Clear TIM Capture compare interrupt pending bit */
+        TIM_ClearITPendingBit(TIM1, TIM_IT_CC3);
+    }
+
+    if(TIM_GetITStatus(TIM1, TIM_IT_CC4) == SET)
+    {
+        rt_kprintf("TIM_IT_CC4\r\n");
+        /* Clear TIM Capture compare interrupt pending bit */
+        TIM_ClearITPendingBit(TIM1, TIM_IT_CC4);
+    }
+}
+
+void TIM4_IRQHandler(void)
+{
+    if(TIM_GetITStatus(TIM4, TIM_IT_CC1) == SET)
+    {
+        uint8_t pin = 8;
+        const pin_to_timer_index_t * timer_index;
+
+        timer_index = pin_to_timer(pin);
+
+        if((pulsein_table[pin].step == 0)
+                && (digitalRead(pin) == pulsein_table[pin].state))
+        {
+            pulsein_table[pin].step = 1;
+            pulsein_table[pin].value = rt_hw_tick_get_microsecond();
+        }
+        else if(pulsein_table[pin].step == 1)
+        {
+            uint32_t tmp = rt_hw_tick_get_microsecond();
+
+            pulsein_table[pin].step = 2;
+
+            if(tmp < pulsein_table[pin].value)
+            {
+                pulsein_table[pin].value = (0xFFFFFFFF -  pulsein_table[pin].value) + tmp;
+            }
+            pulsein_table[pin].value = tmp - pulsein_table[pin].value;
+
+            TIM_ITConfig(timer_index->tim, timer_index->TIM_IT, DISABLE);
+            rt_event_send(&pulsein_event, (1 << pin));
+        }
+
+        /* Clear TIM Capture compare interrupt pending bit */
+        TIM_ClearITPendingBit(timer_index->tim, timer_index->TIM_IT);
+    } /* TIM_IT_CC1 */
 }
