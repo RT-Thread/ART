@@ -47,6 +47,8 @@
 #define RT_USING_MEMPOOL
 // <bool name="RT_USING_HEAP" description="Using Dynamic Heap Management in the system" default="true" />
 #define RT_USING_HEAP
+// <bool name="RT_USING_MEMHEAP" description="Using extra-dynamic heap management in the system" default="true" />
+#define RT_USING_MEMHEAP
 // <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />
 #define RT_USING_SMALL_MEM
 // <bool name="RT_USING_SLAB" description="Using SLAB memory management for large memory" default="false" />

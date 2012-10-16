@@ -525,23 +525,9 @@
 
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
-    <zip basedir="windows/work" 
-	 prefix="arduino-${version}"
-	 destfile="windows/arduino-${version}.zip" />
-    <zip basedir="windows/work" 
-	 prefix="arduino-${version}"
-	 destfile="windows/arduino-${version}-expert.zip" 
-	 excludes="java/**" />
-
     <zip destfile="windows/arduino-${version}-windows.zip">
       <zipfileset dir="windows/work" 
 		  prefix="arduino-${version}" />
-    </zip>
-
-    <zip destfile="windows/arduino-${version}-windows-expert.zip">
-      <zipfileset dir="windows/work" 
-		  prefix="arduino-${version}" 
-		  excludes="java/**" />
     </zip>
     
     <echo>
@@ -549,7 +535,6 @@
       Arduino for Windows was built. Grab the archive from   
       
       windows/arduino-${version}-windows.zip
-      windows/arduino-${version}-windows-expert.zip
       =======================================================
     </echo>
   </target>
