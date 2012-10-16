@@ -43,15 +43,33 @@ void NVIC_Configuration(void)
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 }
-
+static uint32_t tick1,tick2;
+static uint16_t count = 0;
+static int ttttt = 0;
 /**
  * This is the timer interrupt service routine.
  *
  */
 void SysTick_Handler(void)
 {
+// 			if(count == 0)
+// 			{
+// 				tick1 = rt_hw_tick_get_microsecond();
+// 				count++;
+// 			}
+// 		else
+// 			{
+// 				tick2 = rt_hw_tick_get_microsecond();
+// 				tick2 -= tick1;
+// 				count = 0;
+// 				rt_kprintf("%u\r\n",tick2);
+// 			}
+	
     /* enter interrupt */
     rt_interrupt_enter();
+
+//     digitalWrite(11, ttttt);
+//     ttttt = 1 - ttttt;
 
     rt_tick_increase();
 
@@ -111,6 +129,7 @@ void rt_hw_board_init()
 
     /* Configure the SysTick */
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+//    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
 
     rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
@@ -118,8 +137,8 @@ void rt_hw_board_init()
 #endif
 }
 
-#define TICK_MS (1000/RT_TICK_PER_SECOND)
-#define TICK_US	(1000000/RT_TICK_PER_SECOND)
+#define TICK_MS (1000ULL/RT_TICK_PER_SECOND)
+#define TICK_US	(1000000ULL/RT_TICK_PER_SECOND)
 
 #include <rtm.h>
 
@@ -143,11 +162,12 @@ rt_uint32_t rt_hw_tick_get_millisecond(void)
 rt_uint32_t rt_hw_tick_get_microsecond(void)
 {
     rt_tick_t tick;
-    rt_uint32_t value;
+    uint32_t value;
 
     tick = rt_tick_get();
     value = tick * TICK_US + (SysTick->LOAD - SysTick->VAL) * TICK_US / SysTick->LOAD;
 
+		
     return value;
 }
 
