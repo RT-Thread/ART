@@ -50,9 +50,61 @@ static void led_thread_entry(void* parameter)
     }
 }
 
+#include "libarduino.h"
+static void art_test(void)
+{
+    int oil = 2;
+    int value = 0;
+    int count = 0;
+
+//     pinMode(oil, INPUT);
+//     pinMode(10, OUTPUT);
+//     pinMode(11, OUTPUT);
+    //pinMode(8, OUTPUT);
+	for(oil = 2; oil < 14; oil ++ )
+	{
+		pinMode(oil, OUTPUT);
+		analogWrite(oil,50);
+	}
+//     digitalWrite(7, 0);
+
+//     analogWrite(7, 50);
+//     analogWrite(9, 50);
+
+//     while(1)
+//     {
+//         count++;
+
+//         if(count & 0x01)
+//         {
+//             oil = 8;
+//             rt_kprintf("pulseIn #%u, ", oil);
+// //        value = pulseIn(oil, LOW, 20000);
+//             value = pulseIn(oil, HIGH, 20000);
+//             rt_kprintf("value:%u\r\n", value);
+//             rt_thread_delay(RT_TICK_PER_SECOND/10);
+//         }
+//         else
+//         {
+//             oil = 7;
+//             rt_kprintf("pulseIn #%u, ", oil);
+// //        value = pulseIn(oil, LOW, 20000);
+//             value = pulseIn(oil, HIGH, 20000);
+//             rt_kprintf("value:%u\r\n", value);
+//             rt_thread_delay(RT_TICK_PER_SECOND/10);
+//         }
+
+// //        digitalWrite(10, LOW);
+// //        rt_thread_delay(RT_TICK_PER_SECOND/50);
+// //        digitalWrite(10, HIGH);
+// //        rt_thread_delay(RT_TICK_PER_SECOND/50);
+//     }
+}
+
 static void thread_entry(void* parameter)
 {
     rt_components_init();
+		art_test();
 
 #ifdef RT_USING_DFS
         if (dfs_mount(RT_NULL, "/", "rom", 0, DFS_ROMFS_ROOT) == 0)
@@ -66,26 +118,26 @@ static void thread_entry(void* parameter)
             rt_kprintf("ROM File System initialzation failed!\n");
 #endif
 
-#ifdef RT_USING_USB_DEVICE
-    /* usb device controller driver initilize */
-    rt_hw_usbd_init();
+// #ifdef RT_USING_USB_DEVICE
+//     /* usb device controller driver initilize */
+//     rt_hw_usbd_init();
 
-    rt_usb_device_init("usbd");
+//     rt_usb_device_init("usbd");
 
-    rt_usb_vcom_init();
+//     rt_usb_vcom_init();
 
-#ifdef RT_USING_CONSOLE
-    rt_console_set_device("vcom");
-#endif
-#ifdef RT_USING_FINSH
-    finsh_set_device("vcom");
-#endif
-#endif
-    
-#ifdef RT_USING_USB_HOST
-    /* register stm32 usb host controller driver */
-    rt_hw_susb_init();
-#endif
+// #ifdef RT_USING_CONSOLE
+//     rt_console_set_device("vcom");
+// #endif
+// #ifdef RT_USING_FINSH
+//     finsh_set_device("vcom");
+// #endif
+// #endif
+//     
+// #ifdef RT_USING_USB_HOST
+//     /* register stm32 usb host controller driver */
+//     rt_hw_susb_init();
+// #endif
 
     do_init();
 }

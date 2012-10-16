@@ -29,13 +29,10 @@ extern struct rt_event pulsein_event;
 
 const pin_to_timer_index_t *pin_to_timer(uint8_t pin);
 
-void TIM_config(uint8_t pin);
+void TIM_config(uint8_t pin, uint32_t frequency);
 void TIM_NVIC_Configuration(uint8_t pin);
 
-void pwmConfig(uint8_t pin,
-               uint8_t duty_cycle,
-               unsigned int frequency,
-               unsigned int clock);
+void pwmConfig(uint8_t pin, uint8_t duty_cycle);
 struct pulsein_node * get_pulsein_node(uint8_t pin);
 
 #endif // TIM_H_INCLUDED
