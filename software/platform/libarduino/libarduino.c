@@ -214,8 +214,11 @@ FINSH_FUNCTION_EXPORT(noTone, Stops the generation of a square wave triggered by
 void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
 {
     RT_ASSERT(frequency * 2 < UINT16_MAX);
-    //TODO: !!!
-    //pwmConfig(pin, UINT8_MAX / 2, frequency, UINT16_MAX);
+    if(pin < 2 || pin > 3)
+        return;
+
+    TIM_config(pin, frequency);
+    pwmConfig(pin, UINT8_MAX / 2);
     rt_thread_delay(rt_tick_from_millisecond(duration));
     pinMode(pin, OUTPUT);
     digitalWrite(pin, LOW);
