@@ -54,11 +54,11 @@ void TIM_config(uint8_t pin, uint32_t frequency)
     {
         frequency = PWM_FREQUENCY_DEFAULT;
     }
-		else if(frequency == 0)
-		{
-				frequency = pwm_frequency[pin];
-		}
-		
+    else if(frequency == 0)
+    {
+        frequency = pwm_frequency[pin];
+    }
+
     /* Time base configuration */
     if(pwm_frequency[pin] != frequency)
     {
@@ -191,9 +191,9 @@ void pwmConfig(uint8_t pin, uint8_t duty_cycle)
         RT_ASSERT(0);
         return;
     }
-		
-		if(timer_index->tim == TIM1)
-		TIM_CtrlPWMOutputs(TIM1, ENABLE);
+
+    if(timer_index->tim == TIM1)
+        TIM_CtrlPWMOutputs(TIM1, ENABLE);
 
     TIM_ARRPreloadConfig(timer_index->tim, ENABLE);
     TIM_Cmd(timer_index->tim, ENABLE);
