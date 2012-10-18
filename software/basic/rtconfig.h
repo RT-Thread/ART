@@ -47,6 +47,8 @@
 #define RT_USING_MEMPOOL
 // <bool name="RT_USING_HEAP" description="Using Dynamic Heap Management in the system" default="true" />
 #define RT_USING_HEAP
+// <bool name="RT_USING_MEMHEAP" description="Using extra-dynamic heap management in the system" default="true" />
+#define RT_USING_MEMHEAP
 // <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />
 #define RT_USING_SMALL_MEM
 // <bool name="RT_USING_SLAB" description="Using SLAB memory management for large memory" default="false" />
@@ -63,11 +65,22 @@
 #define RT_UART_RX_BUFFER_SIZE	64
 // </section>
 
+// <section name="RT_USING_USB_DEVICE" description="USB Device stack" default="true" >
+#define RT_USING_USB_DEVICE
+// </section>
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
+// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console output" default="vcom">
+// <item name="USB virtual serial">"vcom"</item>
+// <item name="UART1">"uart1"</item>
+// </string>
+#define RT_CONSOLE_DEVICE_NAME "vcom"
 // </section>
+
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using components manager" default="true" />
+#define RT_USING_COMPONENTS_INIT
 
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH

@@ -16,15 +16,25 @@
 #include <board.h>
 #include <rtthread.h>
 
+#include <components.h>
 static void thread_entry(void* parameter)
 {
-	usbd_hw_init();
-	/* set console and finsh to USB vcom */
+    rt_components_init();
+
+#ifdef RT_USING_USB_DEVICE
+    /* usb device controller driver initilize */
+    rt_hw_usbd_init();
+
+    rt_usb_device_init("usbd");
+
+    rt_usb_vcom_init();
+
 #ifdef RT_USING_CONSOLE
-	rt_console_set_device("vcom");
+    rt_console_set_device("vcom");
 #endif
 #ifdef RT_USING_FINSH
-	finsh_set_device("vcom");
+    finsh_set_device("vcom");
+#endif
 #endif
 }
 
