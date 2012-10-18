@@ -230,4 +230,5 @@ RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
 RTM_EXPORT(analogWrite);
 RTM_EXPORT(analogRead);
+RTM_EXPORT(noTone);
 RTM_EXPORT(tone);

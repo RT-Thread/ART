@@ -434,7 +434,7 @@
   <target name="windows-checkos" unless="windows">
     <echo>
       =======================================================
-      Arduino for Windows can only be built on windows.
+      ART_work for Windows can only be built on windows.
       
       Bye. 
       =======================================================
@@ -487,6 +487,8 @@
       <fileset dir="../../software" includes="README.md" />
     </copy>
 
+    <copy file="../../software/platform/rtthread.bin" tofile="windows/work/hardware/ART/rtthread.bin" overwrite="true" />
+
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
@@ -525,16 +527,16 @@
 
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
-    <zip destfile="windows/arduino-${version}-windows.zip">
+    <zip destfile="windows/ART_work-${version}-windows.zip">
       <zipfileset dir="windows/work" 
-		  prefix="arduino-${version}" />
+		  prefix="ART_work-${version}" />
     </zip>
     
     <echo>
       =======================================================
-      Arduino for Windows was built. Grab the archive from   
+      ART_work for Windows was built. Grab the archive from   
       
-      windows/arduino-${version}-windows.zip
+      windows/ART_wrok-${version}-windows.zip
       =======================================================
     </echo>
   </target>
