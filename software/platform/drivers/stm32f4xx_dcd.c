@@ -241,11 +241,13 @@ USBD_DCD_INT_cb_TypeDef USBD_DCD_INT_cb =
 USBD_DCD_INT_cb_TypeDef  *USBD_DCD_INT_fops = &USBD_DCD_INT_cb;
 
 static rt_err_t ep_stall(uep_t ep)
-{
-    RT_ASSERT(ep != RT_NULL);
-
+{ 
     if(ep == 0)
-        DCD_EP_Stall(&USB_OTG_Core, 0);
+    {
+        DCD_EP_Stall(&USB_OTG_Core, 0x80);            
+        DCD_EP_Stall(&USB_OTG_Core, 0);    
+        USB_OTG_EP0_OutStart(&USB_OTG_Core);  
+    }
     else 
         DCD_EP_Stall(&USB_OTG_Core, ep->ep_desc->bEndpointAddress);
 
