@@ -12,7 +12,6 @@
  * 2009-01-05     Bernard      first implementation
  */
 
-#include <rtm.h>
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -100,16 +99,16 @@ void rt_hw_board_init()
     /* Configure the SysTick */
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
-#if STM32_CONSOLE_USART != 0
     rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(CONSOLE_DEVICE);
 #endif
-#endif
 }
 
-#define TICK_MS (1000/RT_TICK_PER_SECOND)
-#define TICK_US (1000000/RT_TICK_PER_SECOND)
+#define TICK_MS (1000ULL/RT_TICK_PER_SECOND)
+#define TICK_US	(1000000ULL/RT_TICK_PER_SECOND)
+
+#include <rtm.h>
 
 /**
  * get millisecond since system passed

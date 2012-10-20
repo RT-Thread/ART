@@ -6,7 +6,7 @@
 #include "pin_table.h"
 #include "tim.h"
 
-#define ITEM_NUM(items)	sizeof(items)/sizeof(items[0])
+#define ITEM_NUM(items) sizeof(items)/sizeof(items[0])
 
 typedef struct
 {
@@ -40,7 +40,7 @@ pin_to_analog_index_t pin_to_analog_index[] =
 
 rt_inline pin_to_analog_index_t *pin_to_analog(uint8_t pin)
 {
-    if (pin >= ITEM_NUM(pin_to_analog_index))
+    if(pin >= ITEM_NUM(pin_to_analog_index))
         return RT_NULL;
     else
         return pin_to_analog_index + pin;
@@ -48,7 +48,7 @@ rt_inline pin_to_analog_index_t *pin_to_analog(uint8_t pin)
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-    const struct pin_index* index;
+    const struct pin_index *index;
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     index = get_pin(pin);
@@ -65,7 +65,7 @@ void pinMode(uint8_t pin, uint8_t mode)
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 
-    if (mode == OUTPUT)
+    if(mode == OUTPUT)
     {
         /* output setting */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -83,7 +83,7 @@ FINSH_FUNCTION_EXPORT(pinMode, set pin mode);
 
 void digitalWrite(uint8_t pin, uint8_t value)
 {
-    const struct pin_index* index;
+    const struct pin_index *index;
 
     index = get_pin(pin);
     if(index == RT_NULL)
@@ -91,7 +91,7 @@ void digitalWrite(uint8_t pin, uint8_t value)
         return;
     }
 
-    if (value == LOW)
+    if(value == LOW)
     {
         GPIO_ResetBits(index->gpio, index->pin);
     }
@@ -115,7 +115,7 @@ int digitalRead(uint8_t pin)
         return value;
     }
 
-    if (GPIO_ReadInputDataBit(index->gpio, index->pin) == Bit_RESET)
+    if(GPIO_ReadInputDataBit(index->gpio, index->pin) == Bit_RESET)
     {
         value = LOW;
     }
@@ -128,8 +128,8 @@ int digitalRead(uint8_t pin)
 }
 FINSH_FUNCTION_EXPORT(digitalRead, read value from digital pin);
 
-#define PWM_COUNTER_CLOCK       1000000	// choose a value which will result in proper prescalar value
-#define PWM_FREQUENCY_DEFAULT   1000	// choose a value which will result in proper period
+#define PWM_COUNTER_CLOCK       1000000 // choose a value which will result in proper prescalar value
+#define PWM_FREQUENCY_DEFAULT   1000    // choose a value which will result in proper period
 void analogWrite(uint8_t pin, uint8_t value)
 {
     // We need to make sure the PWM output is enabled for those pins
@@ -138,19 +138,19 @@ void analogWrite(uint8_t pin, uint8_t value)
     // for consistenty with Wiring, which doesn't require a pinMode
     // call for the analog output pins.
 
-    if (value == 0)
+    if(value == 0)
     {
         pinMode(pin, OUTPUT);
         digitalWrite(pin, LOW);
     }
-    else if (value == 255)
+    else if(value == 255)
     {
         pinMode(pin, OUTPUT);
         digitalWrite(pin, HIGH);
     }
     else
     {
-        pwmConfig(pin, value, PWM_FREQUENCY_DEFAULT, PWM_COUNTER_CLOCK);
+        pwmConfig(pin, value);
     }
 }
 FINSH_FUNCTION_EXPORT(analogWrite, write analog value to digital pin using pwm);
@@ -192,7 +192,7 @@ int analogRead(uint8_t pin)
     ADC_Cmd(pin_index_p->adc, ENABLE);
 
     ADC_SoftwareStartConv(pin_index_p->adc);
-    while(ADC_GetFlagStatus(pin_index_p->adc, ADC_FLAG_EOC) == RESET)
+    while (ADC_GetFlagStatus(pin_index_p->adc, ADC_FLAG_EOC) == RESET)
         ;
     return ADC_GetConversionValue(pin_index_p->adc);
 }
@@ -201,7 +201,7 @@ FINSH_FUNCTION_EXPORT(analogRead, Reads the value from the specified analog pin)
 void noTone(uint8_t pin)
 {
     const pin_to_timer_index_t *index_p = pin_to_timer(pin);
-    if (index_p)
+    if(index_p)
     {
         TIM_Cmd(index_p->tim, DISABLE);
         pinMode(pin, OUTPUT);
@@ -214,16 +214,21 @@ FINSH_FUNCTION_EXPORT(noTone, Stops the generation of a square wave triggered by
 void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
 {
     RT_ASSERT(frequency * 2 < UINT16_MAX);
-    pwmConfig(pin, UINT8_MAX / 2, frequency, UINT16_MAX);
+    if(pin < 2 || pin > 3)
+        return;
+
+    TIM_config(pin, frequency);
+    pwmConfig(pin, UINT8_MAX / 2);
     rt_thread_delay(rt_tick_from_millisecond(duration));
     pinMode(pin, OUTPUT);
     digitalWrite(pin, LOW);
 }
-FINSH_FUNCTION_EXPORT(tone, generates a square wave of specified freqency (and 50% duty cycle) on a pin);
+FINSH_FUNCTION_EXPORT(tone, generates a square wave of specified freqency ( and 50 % duty cycle) on a pin);
 
 RTM_EXPORT(pinMode);
 RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
 RTM_EXPORT(analogWrite);
 RTM_EXPORT(analogRead);
+RTM_EXPORT(noTone);
 RTM_EXPORT(tone);

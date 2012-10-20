@@ -118,8 +118,8 @@ void rt_hw_board_init()
 #endif
 }
 
-#define TICK_MS (1000/RT_TICK_PER_SECOND)
-#define TICK_US	(1000000/RT_TICK_PER_SECOND)
+#define TICK_MS (1000ULL/RT_TICK_PER_SECOND)
+#define TICK_US	(1000000ULL/RT_TICK_PER_SECOND)
 
 #include <rtm.h>
 

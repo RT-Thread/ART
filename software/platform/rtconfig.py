@@ -6,7 +6,8 @@ CPU='cortex-m4'
 CROSS_TOOL='gcc'
 
 PLATFORM 	= 'gcc'
-EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+EXEC_PATH 	= '../../tools/arm/bin'
+#EXEC_PATH = 'C:/Program Files (x86)/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
