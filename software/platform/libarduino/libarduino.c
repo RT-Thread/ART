@@ -225,6 +225,12 @@ void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
 }
 FINSH_FUNCTION_EXPORT(tone, generates a square wave of specified freqency ( and 50 % duty cycle) on a pin);
 
+void exec(const char* module)
+{
+    rt_module_open(module);
+}
+RTM_EXPORT(exec);
+
 RTM_EXPORT(pinMode);
 RTM_EXPORT(digitalWrite);
 RTM_EXPORT(digitalRead);
