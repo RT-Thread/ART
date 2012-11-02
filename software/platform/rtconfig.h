@@ -14,7 +14,7 @@
 // </integer>
 #define RT_THREAD_PRIORITY_MAX    32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
-#define RT_TICK_PER_SECOND    100
+#define RT_TICK_PER_SECOND    1000
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
 #define IDLE_THREAD_STACK_SIZE    512
 // <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
@@ -29,6 +29,15 @@
 
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
 #define RT_USING_HOOK
+// <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
+#define RT_USING_TIMER_SOFT
+// <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
+#define RT_TIMER_THREAD_PRIO	4
+// <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
+#define RT_TIMER_THREAD_STACK_SIZE	512
+// <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
+#define RT_TIMER_TICK_PER_SECOND	200
+// </section>
 // <section name="IPC" description="Inter-Thread communication" default="always" >
 // <bool name="RT_USING_SEMAPHORE" description="Using semaphore in the system" default="true" />
 #define RT_USING_SEMAPHORE
