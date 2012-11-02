@@ -210,18 +210,39 @@ void noTone(uint8_t pin)
 }
 FINSH_FUNCTION_EXPORT(noTone, Stops the generation of a square wave triggered by tone());
 
+static void pwm_shutdown(void *pin)
+{
+    uint32_t p;
+
+    p = (rt_uint32_t) pin;
+    pinMode((uint8_t) p, OUTPUT);
+    digitalWrite((uint8_t) p, LOW);
+}
 /* normally the tone frequency should be 31 to 4978, refer to piches.h */
 void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
 {
+    static struct rt_timer timer2, timer3;
+    rt_timer_t timer;
+    
     RT_ASSERT(frequency * 2 < UINT16_MAX);
     if(pin < 2 || pin > 3)
         return;
-
+    if (pin == 2)
+    {
+        timer = &timer2;
+    }
+    else if (pin =3)
+    {
+        timer = &timer3;    
+    }
+    rt_timer_stop(timer);
+    rt_timer_init(timer, "pwmkill", 
+                  pwm_shutdown, (void*) pin,
+                  rt_tick_from_millisecond(duration),
+                  RT_TIMER_FLAG_ONE_SHOT);
     TIM_config(pin, frequency);
     pwmConfig(pin, UINT8_MAX / 2);
-    rt_thread_delay(rt_tick_from_millisecond(duration));
-    pinMode(pin, OUTPUT);
-    digitalWrite(pin, LOW);
+    rt_timer_start(timer);
 }
 FINSH_FUNCTION_EXPORT(tone, generates a square wave of specified freqency ( and 50 % duty cycle) on a pin);
 
