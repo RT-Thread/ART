@@ -231,7 +231,7 @@ void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
     {
         timer = &timer2;
     }
-    else if (pin =3)
+    else if (pin == 3)
     {
         timer = &timer3;    
     }
