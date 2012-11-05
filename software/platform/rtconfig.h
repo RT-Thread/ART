@@ -76,6 +76,8 @@
 #define RT_USING_I2C
 // <section name="RT_USING_I2C_BITOPS" description="Using BITOPS in I2C Driver" default="true" >
 #define RT_USING_I2C_BITOPS
+// <bool name="RT_USING_SPI" description="Using SPI Bus Device Driver Framework" default="true" />
+#define RT_USING_SPI
 // </section>
 
 // <section name="RT_USING_USB_HOST" description="USB Host stack" default="true" >
@@ -124,7 +126,7 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+#define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
@@ -157,7 +159,7 @@
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-// #define RT_USING_LWIP
+/* #define RT_USING_LWIP */
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />

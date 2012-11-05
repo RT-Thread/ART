@@ -17,6 +17,8 @@ env = Environment(tools = ['mingw'],
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
 	AR = rtconfig.AR, ARFLAGS = '-rc',
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+# in order to add math library, change link order of scons
+env['LINKCOM'] = '$LINK $SOURCES -o $TARGET $LINKFLAGS $__RPATH $_LIBDIRFLAGS $_LIBFLAGS'
 
 Export('RTT_ROOT')
 Export('rtconfig')
