@@ -213,6 +213,14 @@
 #define RT_LWIP_MSKADDR3 0
 // </section>
 
+// <section name="RT_USING_LUA" description="Using lua" default="false" >
+// #define RT_USING_LUA
+// <bool name="RT_LUA_OPTRAM" description="Optimize RAM for lua" default="false" />
+// #define RT_LUA_OPTRAM
+// <bool name="RT_LUA_USE_EXLIBS" description="Add external libraries for lua" default="false" />
+// #define RT_LUA_USE_EXLIBS
+// </section>
+
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
 // #define RT_USING_CMSIS_OS
 // <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
