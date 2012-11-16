@@ -12,58 +12,38 @@
  * 2012-02-28     Bernard      the first version
  */
 
-#include "stm32f4xx.h"
 #include <board.h>
 #include <rtthread.h>
 
 #include <components.h>
 
-#define LED_SYS_ON()     GPIO_SetBits(GPIOB, GPIO_Pin_2)
-#define LED_SYS_OFF()    GPIO_ResetBits(GPIOB, GPIO_Pin_2)
-static void led_thread_entry(void* parameter)
-{
-    /* LED : PB2 BOOT1 config. */
-    {
-        GPIO_InitTypeDef  GPIO_InitStructure;
-
-        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-        /* output setting */
-        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
-        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-        GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-        GPIO_Init(GPIOB, &GPIO_InitStructure);
-    }
-
-    /* sys led blink. */
-    while(1)
-    {
-        /* turn on led 20ms. */
-        LED_SYS_ON();
-        rt_thread_delay(RT_TICK_PER_SECOND/50);
-
-        /* turn off led 1s. */
-        LED_SYS_OFF();
-        rt_thread_delay(RT_TICK_PER_SECOND);
-    }
-}
-
 static void thread_entry(void* parameter)
 {
+    sys_led_init();
+
+    rt_platform_init();
     rt_components_init();
 
 #ifdef RT_USING_DFS
-        if (dfs_mount(RT_NULL, "/", "rom", 0, DFS_ROMFS_ROOT) == 0)
+    if (dfs_mount(RT_NULL, "/", "rom", 0, DFS_ROMFS_ROOT) == 0)
+    {
+        rt_kprintf("ROM File System initialized!\n");
+
+#ifdef RT_USING_DFS_ELMFAT
+		/* mount FAT file system on SD card */
+        msd_init("sd0", "spi30");
+        if (dfs_mount("sd0", "/sd", "elm", 0, 0) == 0)
         {
-            rt_kprintf("ROM File System initialized!\n");
-            {
-                rt_thread_delay(RT_TICK_PER_SECOND);
-            }
+            rt_kprintf("SDCard File System initialized!\n");
         }
-        else
-            rt_kprintf("ROM File System initialzation failed!\n");
+		else
+		{
+			rt_kprintf("SDCard File System initialzation failed!\n");
+		}
+#endif
+    }
+    else
+        rt_kprintf("ROM File System initialzation failed!\n");
 #endif
 
 #ifdef RT_USING_USB_DEVICE
@@ -73,13 +53,6 @@ static void thread_entry(void* parameter)
     rt_usb_device_init("usbd");
 
     rt_usb_vcom_init();
-
-#ifdef RT_USING_CONSOLE
-    rt_console_set_device("vcom");
-#endif
-#ifdef RT_USING_FINSH
-    finsh_set_device("vcom");
-#endif
 #endif
     
 #ifdef RT_USING_USB_HOST
@@ -87,19 +60,21 @@ static void thread_entry(void* parameter)
     rt_hw_susb_init();
 #endif
 
+	/* re-set console and finsh device */
+#ifdef RT_USING_CONSOLE
+		rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+#ifdef RT_USING_FINSH
+		finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+	/* do initialization script file */
     do_init();
 }
 
 int rt_application_init(void)
 {
     rt_thread_t tid;
-
-    tid = rt_thread_create("sys_led",
-                           led_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX-2, 2);
-
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
 
     tid = rt_thread_create("init",
                            thread_entry, RT_NULL,
