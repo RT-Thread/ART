@@ -129,3 +129,78 @@ void rt_hw_spi2_init(void)
         rt_spi_bus_attach_device(&spi_device, "spi20", "spi2", (void*)&spi_cs);
     }
 }
+
+/*** SPI3 BUS and device
+SPI2_MOSI: PB5
+SPI2_MISO: PC11
+SPI2_SCK : PC10
+*/
+void rt_hw_spi3_init(void)
+{
+    /* Enable SPI1 Periph clock */
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
+
+    /* register spi bus */
+    {
+        static struct stm32_spi_bus stm32_spi;
+        GPIO_InitTypeDef GPIO_InitStructure;
+
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+        /*!< SPI SCK pin configuration */
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+        /*!< SPI MISO pin configuration */
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+        /*!< SPI MOSI pin configuration */
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+        /* Connect alternate function */
+        GPIO_PinAFConfig(GPIOB, GPIO_PinSource5, GPIO_AF_SPI3);
+        GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3);
+        GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_SPI3);
+
+        stm32_spi_register(SPI3, &stm32_spi, "spi3");
+    }
+
+    /* add cs */
+    {
+        static struct rt_spi_device spi_device;
+        static struct stm32_spi_cs  spi_cs;
+
+        GPIO_InitTypeDef GPIO_InitStructure;
+
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+        /* spi20: PA15 */
+        spi_cs.GPIOx = GPIOA;
+        spi_cs.GPIO_Pin = GPIO_Pin_15;
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+
+        GPIO_InitStructure.GPIO_Pin = spi_cs.GPIO_Pin;
+        GPIO_SetBits(spi_cs.GPIOx, spi_cs.GPIO_Pin);
+        GPIO_Init(spi_cs.GPIOx, &GPIO_InitStructure);
+
+        rt_spi_bus_attach_device(&spi_device, "spi30", "spi3", (void*)&spi_cs);
+    }
+}
+
+void rt_platform_init(void)
+{
+    rt_hw_spi1_init();
+    rt_hw_spi2_init();
+    rt_hw_spi3_init();
+}
