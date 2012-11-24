@@ -213,6 +213,14 @@ public abstract class Uploader implements MessageConsumer  {
       exception =  new RunnerException(_("Device is not responding, check the right serial port is selected or RESET the board right before exporting"));
       return;
     }
+    if (s.indexOf("No DFU capable USB device found") != -1) {
+    	exception = new RunnerException(_("ART board is not found. Please check USB cable or DFU button"));
+    	return;
+    }
+    if (s.indexOf("connect ART daemon server") != -1) {
+    	exception = new RunnerException(_("ART(WiFi) can not be connected. Please check whether WiFi led is ON or IP address is correct."));
+    	return;
+    }
     if (s.indexOf("Programmer is not responding") != -1 ||
         s.indexOf("programmer is not responding") != -1 ||
         s.indexOf("protocol error") != -1 ||
