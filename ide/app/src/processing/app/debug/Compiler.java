@@ -717,13 +717,15 @@ public class Compiler implements MessageConsumer {
 				toolchainBasePath + "arm-none-eabi-g++",
 				"-c", // compile, don't link
 				"-O2", // optimized compiling
+				"-Os", // optimize for size
 				// show warnings if verbos
-				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
+				// Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
+				"-w",
+				"-fstrict-aliasing",
 				"-fno-exceptions",
-				"-fno-rtti", "-funwind-tables", "-fstrict-aliasing",
-				// "-ffunction-sections", // place each function in its own
-				// section
-				// "-fdata-sections",
+				"-fno-rtti", "-funwind-tables", 
+				"-ffunction-sections", // place each function in its own
+				"-fdata-sections",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb",
 				"-mlong-calls", "-fPIC",
 				"-MMD", // output dependancy info
