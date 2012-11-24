@@ -1,0 +1,50 @@
+import os
+import sys
+import SCons.cpp
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+Export('RTT_ROOT')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+sconstruct = File('SConstruct')
+fn = sconstruct.rfile()
+name = fn.name
+building_dir = os.path.dirname(fn.abspath)
+
+env = Environment(tools = ['mingw'],
+        AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+        CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
+        LINK = rtconfig.LINK,
+        CPPPATH = [os.path.join(building_dir, '..', 'platform'), 
+                os.path.join(building_dir, '..', 'cores', 'arduino'), 
+                RTT_ROOT + '/include',
+                RTT_ROOT + '/components/finsh',
+                RTT_ROOT + '/components/dfs', 
+                RTT_ROOT + '/components/dfs/include',
+                RTT_ROOT + '/components/libc/newlib',
+                RTT_ROOT + '/components/drivers/include',
+                RTT_ROOT + '/components/net/lwip/src',
+                RTT_ROOT + '/components/net/lwip/src/include',
+                RTT_ROOT + '/components/net/lwip/src/include/ipv4',
+                RTT_ROOT + '/components/net/lwip/src/arch/include',
+                ])
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+Export('env')
+
+PrepareModuleBuilding(env, RTT_ROOT)
+
+# build Ethernet library
+objs = SConscript('Ethernet/SConscript')
+TARGET = 'Ethernet'
+env.Library(TARGET, objs)
+
+# build WiFi library
+objs = SConscript('WIFI/SConscript')
+TARGET = 'WiFi'
+env.Library(TARGET, objs)
