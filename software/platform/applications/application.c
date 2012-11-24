@@ -16,10 +16,15 @@
 #include <rtthread.h>
 
 #include <components.h>
+#include <service.h>
+#include "daemon.h"
 
 static void thread_entry(void* parameter)
 {
     sys_led_init();
+
+    /* initialize kernel service */
+    service_init();
 
     rt_platform_init();
     rt_components_init();
@@ -66,6 +71,11 @@ static void thread_entry(void* parameter)
 #endif
 #ifdef RT_USING_FINSH
 		finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    /* start daemon */
+#ifdef RT_USING_LWIP
+    daemon();
 #endif
 
 	/* do initialization script file */

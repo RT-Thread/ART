@@ -51,9 +51,9 @@ void sys_led_init(void)
 {
     rt_thread_t tid;
 
-    tid = rt_thread_create("sys_led",
+    tid = rt_thread_create("sysled",
                            sys_led_thread_entry, RT_NULL,
-                           1024, RT_THREAD_PRIORITY_MAX-2, 2);
+                           512, RT_THREAD_PRIORITY_MAX-2, 2);
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);

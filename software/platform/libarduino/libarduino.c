@@ -18,7 +18,7 @@ typedef struct
     uint8_t adc_channel;
 } pin_to_analog_index_t;
 
-pin_to_analog_index_t pin_to_analog_index[] =
+static const pin_to_analog_index_t pin_to_analog_index[] =
 {
     {RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_0, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_10},
     {RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_1, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_11},
@@ -38,7 +38,7 @@ pin_to_analog_index_t pin_to_analog_index[] =
     {RCC_AHB1Periph_GPIOC, GPIOC, GPIO_Pin_2, ADC1, RCC_APB2Periph_ADC1, ADC_Channel_12}
 };
 
-rt_inline pin_to_analog_index_t *pin_to_analog(uint8_t pin)
+rt_inline const pin_to_analog_index_t *pin_to_analog(uint8_t pin)
 {
     if(pin >= ITEM_NUM(pin_to_analog_index))
         return RT_NULL;
@@ -160,7 +160,7 @@ int analogRead(uint8_t pin)
     ADC_InitTypeDef ADC_InitStructure;
     ADC_CommonInitTypeDef ADC_CommonInitStructure;
     GPIO_InitTypeDef GPIO_InitStruture;
-    pin_to_analog_index_t *pin_index_p;
+    const pin_to_analog_index_t *pin_index_p;
 
     pin_index_p = pin_to_analog(pin);
 

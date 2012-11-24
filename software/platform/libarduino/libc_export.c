@@ -9,6 +9,8 @@
 /* export for libc */
 RTM_EXPORT(memmove);
 RTM_EXPORT(memcpy);
+RTM_EXPORT(memcmp);
+RTM_EXPORT(memset);
 RTM_EXPORT(atol);
 RTM_EXPORT(tolower);
 RTM_EXPORT(toupper);
@@ -25,6 +27,7 @@ RTM_EXPORT(malloc);
 RTM_EXPORT(free);
 RTM_EXPORT(realloc);
 RTM_EXPORT(calloc);
+RTM_EXPORT(exit);
 
 /* BPABI symbols */
 extern int __aeabi_cdcmpeq;

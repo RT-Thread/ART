@@ -1,9 +1,11 @@
+#include <rtthread.h>
+
+#ifdef RT_USING_LWIP
 #include <lwip/netdb.h>
 #include <lwip/sockets.h>
 
 #include "libsocket.h"
 
-#ifdef RT_USING_LWIP
 int socket_create(int type)
 {
     int sock = lwip_socket(AF_INET, type, 0);

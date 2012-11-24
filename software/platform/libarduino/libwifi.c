@@ -2,12 +2,13 @@
 
 #include "libwifi.h"
 #include <finsh.h>
+
+#if defined(RT_USING_LWIP) && defined(RT_USING_WIFI)
+
 #include <rt_wlan_dev.h>
 #include <dfs_posix.h>
 #include <string.h>
 #include "service.h"
-
-#if defined(RT_USING_LWIP) && defined(RT_USING_WIFI)
 
 #define WLAN_NVM_FILE	    "/sd/wlan.nvm"
 #define WLAN_DEVICE_NAME    "w0"

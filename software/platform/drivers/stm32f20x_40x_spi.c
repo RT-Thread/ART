@@ -19,7 +19,7 @@
 static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configuration* configuration);
 static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* message);
 
-static struct rt_spi_ops stm32_spi_ops =
+static const struct rt_spi_ops stm32_spi_ops =
 {
     configure,
     xfer
