@@ -219,6 +219,8 @@
 // #define RT_LUA_OPTRAM
 // <bool name="RT_LUA_USE_EXLIBS" description="Add external libraries for lua" default="false" />
 // #define RT_LUA_USE_EXLIBS
+// <boot name="RT_LUS_USE_ARDUINOLIB" description="Add arduino library for lua" default="false" />
+// #define RT_LUA_USE_ARDUINOLIB
 // </section>
 
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />

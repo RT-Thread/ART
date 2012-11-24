@@ -330,32 +330,39 @@
     <copy todir="linux/work" file="linux/dist/arduino" />
     <chmod perm="755" file="linux/work/arduino" />
 
+    <mkdir dir="linux/work/hardware" />
+
     <copy todir="linux/work/hardware">
       <fileset dir="linux/dist" includes="tools/**" />
     </copy>
 
-    <chmod perm="755" file="linux/work/hardware/tools/avrdude" />
+    <mkdir dir="linux/work/hardware/tools" />
+    <copy todir="linux/work/hardware/tools">
+        <fileset file="linux/mkromfs.py" />
+    </copy>
+    <chmod perm="755" file="linux/work/hardware/tools/mkromfs.py" />
+
+	<mkdir dir="linux/work/hardware/ART" />
+    <copy todir="linux/work/hardware/ART">
+      <fileset dir="../../software" includes="cores/**" />
+      <fileset dir="../../software" includes="examples/**" />
+      <fileset dir="../../software" includes="platform/**" />
+      <fileset dir="../../software" includes="rt-thread/**" />
+      <fileset dir="../../software" includes="root/**" />
+      <fileset dir="../../software" includes="boards.txt" />
+      <fileset dir="../../software" includes="programmers.txt" />
+      <fileset dir="../../software" includes="README.md" />
+    </copy>
+
+    <copy file="../../software/platform/rtthread.bin" tofile="windows/work/hardware/ART/rtthread.bin" overwrite="true" />
   </target>
 
   <target name="linux32-build" depends="linux-build" description="Build linux (32-bit) version">
-    <!-- Unzip AVR tools -->
-    <exec executable="tar" dir="linux/work/hardware">
-      <arg value="-xjf"/>
-      <arg value="../../avr_tools_linux32.tar.bz2"/>
-    </exec>
+    <copy tofile="linux/work/lib/librxtxSerial.so" file="linux/dist/lib/librxtxSerial.so" overwrite="true" />
   </target>
 
   <target name="linux64-build" depends="linux-build" description="Build linux (64-bit) version">
-    <copy tofile="linux/work/hardware/tools/avrdude" file="linux/dist/tools/avrdude64" overwrite="true" />
     <copy tofile="linux/work/lib/librxtxSerial.so" file="linux/dist/lib/librxtxSerial64.so" overwrite="true" />
-
-    <chmod perm="755" file="linux/work/hardware/tools/avrdude" />
-
-    <!-- Unzip AVR tools -->
-    <exec executable="tar" dir="linux/work/hardware">
-      <arg value="-xjf"/>
-      <arg value="../../avr_tools_linux64.tar.bz2"/>
-    </exec>
   </target>
   
   <target name="linux32-run" depends="linux32-build" 
@@ -379,7 +386,6 @@
 	   src="linux/jre.tgz" 
 	   overwrite="false"/-->
 
-<!--
     <tar compression="gzip" basedir="linux/work" 
 	 destfile="linux/arduino-${version}.tgz" />
 
@@ -391,10 +397,8 @@
 			    java/**"
 		  /> 
       <tarfileset file="linux/work/arduino" filemode="755" prefix="arduino-${version}" />
-      <tarfileset file="linux/work/hardware/tools/avrdude" filemode="755" 
-		  prefix="arduino-${version}/hardware/tools" />
     </tar>
--->
+
     <move file="linux/work" tofile="linux/arduino-${version}" />
 
     <exec executable="tar" dir="linux">
