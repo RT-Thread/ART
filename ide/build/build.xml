@@ -341,6 +341,10 @@
         <fileset file="linux/mkromfs.py" />
     </copy>
     <chmod perm="755" file="linux/work/hardware/tools/mkromfs.py" />
+    <copy todir="linux/work/hardware/tools">
+        <fileset file="linux/art.py" />
+    </copy>
+    <chmod perm="755" file="linux/work/hardware/tools/art.py" />
 
 	<mkdir dir="linux/work/hardware/ART" />
     <copy todir="linux/work/hardware/ART">
@@ -492,6 +496,12 @@
     </copy>
 
     <copy file="../../software/platform/rtthread.bin" tofile="windows/work/hardware/ART/rtthread.bin" overwrite="true" />
+    <copy file="../../software/platform/rtthread_wifi.bin" tofile="windows/work/hardware/ART/rtthread_wifi.bin" overwrite="true" />
+
+	<!-- Copy libraries -->
+    <copy todir="windows/work">
+      <fileset dir="../../software" includes="libraries/**" />
+    </copy>
 
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
