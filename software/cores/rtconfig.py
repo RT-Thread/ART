@@ -9,7 +9,7 @@ if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 PREFIX = 'arm-none-eabi-'
-CC = PREFIX + 'g++'
+CC = PREFIX + 'gcc'
 CXX = PREFIX + 'g++'
 AS = PREFIX + 'gcc'
 AR = PREFIX + 'ar'
@@ -20,7 +20,8 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 
 DEVICE = ' -mcpu=cortex-m4'
-CFLAGS = DEVICE + ' -mthumb -mlong-calls -O2 -Os -fPIC -fno-exceptions -fno-rtti'
+CFLAGS = DEVICE + ' -mthumb -mlong-calls -O2 -Os -fPIC'
+CXXFLAGS = DEVICE + ' -mthumb -mlong-calls -O2 -Os -fPIC -fno-exceptions -fno-rtti'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
 LFLAGS = DEVICE + ' -mthumb -Wl,-z,max-page-size=0x4 -shared -fPIC -e main -nostdlib'
 

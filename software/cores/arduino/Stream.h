@@ -81,9 +81,11 @@ class Stream : public Print
   // terminates if length characters have been read, timeout, or if the terminator character  detected
   // returns the number of characters placed in the buffer (0 means no valid data found)
 
+#ifdef ART_USING_STRING
   // Arduino String functions to be added here
   String readString();
   String readStringUntil(char terminator);
+#endif
 
   protected:
   long parseInt(char skipChar); // as above but the given skipChar is ignored

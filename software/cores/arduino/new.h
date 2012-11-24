@@ -5,6 +5,7 @@
 #ifndef NEW_H
 #define NEW_H
 
+#include <inttypes.h>
 #include <stdlib.h>
 
 void * operator new(size_t size);

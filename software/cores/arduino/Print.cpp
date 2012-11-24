@@ -38,19 +38,8 @@ size_t Print::write(const uint8_t *buffer, size_t size)
   }
   return n;
 }
-#if 0
-size_t Print::print(const __FlashStringHelper *ifsh)
-{
-  const prog_char *p = (const prog_char *)ifsh;
-  size_t n = 0;
-  while (1) {
-    unsigned char c = pgm_read_byte(p++);
-    if (c == 0) break;
-    n += write(c);
-  }
-  return n;
-}
-#endif
+
+#ifdef ART_USING_STRING
 size_t Print::print(const String &s)
 {
   size_t n = 0;
@@ -59,6 +48,7 @@ size_t Print::print(const String &s)
   }
   return n;
 }
+#endif
 
 size_t Print::print(const char str[])
 {
@@ -111,14 +101,7 @@ size_t Print::print(double n, int digits)
 {
   return printFloat(n, digits);
 }
-#if 0
-size_t Print::println(const __FlashStringHelper *ifsh)
-{
-  size_t n = print(ifsh);
-  n += println();
-  return n;
-}
-#endif
+
 size_t Print::print(const Printable& x)
 {
   return x.printTo(*this);
@@ -131,12 +114,14 @@ size_t Print::println(void)
   return n;
 }
 
+#ifdef ART_USING_STRING
 size_t Print::println(const String &s)
 {
   size_t n = print(s);
   n += println();
   return n;
 }
+#endif
 
 size_t Print::println(const char c[])
 {
@@ -225,7 +210,7 @@ size_t Print::printNumber(unsigned long n, uint8_t base) {
 size_t Print::printFloat(double number, uint8_t digits) 
 { 
   size_t n = 0;
-  
+
   // Handle negative numbers
   if (number < 0.0)
   {

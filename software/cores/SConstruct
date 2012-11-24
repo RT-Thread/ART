@@ -17,8 +17,9 @@ building_dir = os.path.dirname(fn.abspath)
 
 env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
-        CXX = rtconfig.CXX, AR = rtconfig.AR, ARFLAGS = '-rc',
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+        CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK,
         CPPPATH = [os.path.join(building_dir, '..', 'platform'), 
                 RTT_ROOT + '/include',
@@ -27,14 +28,17 @@ env = Environment(tools = ['mingw'],
                 RTT_ROOT + '/components/dfs/include',
                 RTT_ROOT + '/components/libc/newlib',
                 RTT_ROOT + '/components/drivers/include',
+                RTT_ROOT + '/components/net/lwip/src',
+                RTT_ROOT + '/components/net/lwip/src/include',
+                RTT_ROOT + '/components/net/lwip/src/include/ipv4',
+                RTT_ROOT + '/components/net/lwip/src/arch/include',
                 ])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 Export('env')
 
 PrepareModuleBuilding(env, RTT_ROOT)
 
+# build arduino core library
 objs = SConscript('arduino/SConscript')
 TARGET = 'core'
-
-# build program 
 env.Library(TARGET, objs)

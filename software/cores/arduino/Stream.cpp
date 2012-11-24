@@ -244,6 +244,7 @@ size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length)
   return index; // return number of characters, not including null terminator
 }
 
+#ifdef ART_USING_STRING
 String Stream::readString()
 {
   String ret;
@@ -267,4 +268,4 @@ String Stream::readStringUntil(char terminator)
   }
   return ret;
 }
-
+#endif
