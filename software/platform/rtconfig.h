@@ -98,6 +98,16 @@
 
 // <section name="RT_USING_USB_DEVICE" description="USB Device stack" default="true" >
 #define RT_USING_USB_DEVICE
+// <bool name="RT_USB_DEVICE_COMPOSITE" description="Using composit class" default="true" />
+//#define RT_USB_DEVICE_COMPOSITE
+// <bool name="RT_USB_DEVICE_CDC" description="Using cdc class" default="true" />
+#define RT_USB_DEVICE_CDC
+// <bool name="RT_USB_DEVICE_MSTORAGE" description="Using mass storage class" default="true" />
+//#define RT_USB_DEVICE_MSTORAGE
+// <bool name="RT_USB_MSTORAGE_DISK_NAME" description="Disk name used in mass storage class" default="true" />
+//#define RT_USB_MSTORAGE_DISK_NAME   "flash0"
+// <bool name="RT_USB_MSTORAGE_BUFFER_SIZE" description="Buffer size used in mass storage class" default="true" />
+//#define RT_USB_MSTORAGE_BUFFER_SIZE 8 * 1024
 // </section>
 
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
@@ -126,7 +136,7 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-#define RT_USING_NEWLIB
+//#define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
