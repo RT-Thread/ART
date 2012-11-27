@@ -8,14 +8,10 @@
 #include "usb_core.h"
 #include "usb_dcd.h"
 #include "usb_dcd_int.h"
+#include "usbd_ioreq.h"
+#include "usb_bsp.h"
 
 #ifdef RT_USING_USB_DEVICE
-
-typedef enum {
-  USBD_OK   = 0,
-  USBD_BUSY,
-  USBD_FAIL,
-}USBD_Status;
 
 static struct udcd stm32_dcd;
 ALIGN(4) static USB_OTG_CORE_HANDLE USB_OTG_Core;
@@ -175,7 +171,6 @@ static rt_uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
     }
     else
     {
-        rt_uint16_t size;
         struct udev_msg msg;
         
         msg.type = USB_MSG_DATA_NOTIFY;
@@ -244,8 +239,8 @@ static rt_err_t ep_stall(uep_t ep)
 { 
     if(ep == 0)
     {
-        DCD_EP_Stall(&USB_OTG_Core, 0x80);            
         DCD_EP_Stall(&USB_OTG_Core, 0);    
+        DCD_EP_Stall(&USB_OTG_Core, 0x80);            
         USB_OTG_EP0_OutStart(&USB_OTG_Core);  
     }
     else 
@@ -264,12 +259,12 @@ static rt_err_t set_address(rt_uint8_t address)
 
 static rt_err_t clear_feature(rt_uint8_t value)
 {
-
+    return RT_EOK;
 }
 
 static rt_err_t set_feature(rt_uint8_t value)
 {
-
+    return RT_EOK;
 }
 
 static rt_uint8_t ep_in_num = 1;
