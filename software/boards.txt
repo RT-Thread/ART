@@ -3,16 +3,24 @@
 ##############################################################
 
 art.name=ART board
-art.upload.protocol=arduino
+art.upload.protocol=dfu
 art.upload.maximum_size=32256
 art.upload.speed=115200
 art.bootloader.low_fuses=0xff
 art.bootloader.high_fuses=0xde
 art.bootloader.extended_fuses=0x05
 art.bootloader.path=optiboot
-art.bootloader.file=optiboot_atmega328.hex
+art.bootloader.file=rtthread.bin
 art.bootloader.unlock_bits=0x3F
 art.bootloader.lock_bits=0x0F
 art.build.mcu=cortex-m4
 art.build.f_cpu=16000000L
 art.build.core=arduino
+
+art_wifi.name=ART board(with WiFi shield)
+art_wifi.upload.protocol=ip
+art_wifi.upload.addr=10.0.0.102
+art_wifi.bootloader.file=rtthread_wifi.bin
+art_wifi.build.mcu=cortex-m4
+art_wifi.build.f_cpu=16000000L
+art_wifi.build.core=arduino

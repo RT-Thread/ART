@@ -1,6 +1,6 @@
 # See: http://code.google.com/p/arduino/wiki/Platforms
 
-ART.name=STM32 DFU
+ART.name=ART
 ART.communication=usb
-ART.protocol=DFU
+ART.protocol=USB
 ART.speed=9600
