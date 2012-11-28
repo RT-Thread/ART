@@ -12,11 +12,11 @@
 // <item description="32">32</item>
 // <item description="256">256</item>
 // </integer>
-#define RT_THREAD_PRIORITY_MAX    32
+#define RT_THREAD_PRIORITY_MAX    	32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
-#define RT_TICK_PER_SECOND    1000
+#define RT_TICK_PER_SECOND    		1000
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
-#define IDLE_THREAD_STACK_SIZE    512
+#define IDLE_THREAD_STACK_SIZE    	512
 // <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
 #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
@@ -137,7 +137,7 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-//#define RT_USING_NEWLIB
+#define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
@@ -187,6 +187,8 @@
 #define RT_LWIP_TCP
 // <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
 #define RT_LWIP_DNS
+// <bool name="RT_LWIP_USING_RT_MEM" description="Enable RT-Thread memory management" default="true" />
+#define RT_LWIP_USING_RT_MEM
 // <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
 #define RT_LWIP_PBUF_NUM	4
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />

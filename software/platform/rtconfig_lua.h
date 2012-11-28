@@ -12,11 +12,11 @@
 // <item description="32">32</item>
 // <item description="256">256</item>
 // </integer>
-#define RT_THREAD_PRIORITY_MAX    32
+#define RT_THREAD_PRIORITY_MAX    	32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
-#define RT_TICK_PER_SECOND    1000
+#define RT_TICK_PER_SECOND    		1000
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
-#define IDLE_THREAD_STACK_SIZE    512
+#define IDLE_THREAD_STACK_SIZE    	512
 // <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
 #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
@@ -98,6 +98,16 @@
 
 // <section name="RT_USING_USB_DEVICE" description="USB Device stack" default="true" >
 #define RT_USING_USB_DEVICE
+// <bool name="RT_USB_DEVICE_COMPOSITE" description="Using USB composite device" default="true" />
+// #define RT_USB_DEVICE_COMPOSITE
+// <bool name="RT_USB_DEVICE_CDC" description="Using CDC serial device" default="true" />
+#define RT_USB_DEVICE_CDC
+// <bool name="RT_USB_DEVICE_MSTORAGE" description="Using USB mass storage device" default="true" />
+// #define RT_USB_DEVICE_MSTORAGE
+// <string name="RT_USB_MSTORAGE_DISK_NAME" description="Disk name used in mass storage class" default="sd0" />
+#define RT_USB_MSTORAGE_DISK_NAME   "sd0"
+// <integer name="RT_USB_MSTORAGE_BUFFER_SIZE" description="Buffer size used in mass storage class" default="8192" />
+#define RT_USB_MSTORAGE_BUFFER_SIZE 2048
 // </section>
 
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
@@ -105,7 +115,8 @@
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console output" default="vcom">
-// <item name="USB virtual serial">"vcom"</item>
+// <item name="USB virtual serial port">"vcom"</item>
+// <item name="UART0">"uart0"</item>
 // <item name="UART1">"uart1"</item>
 // </string>
 #define RT_CONSOLE_DEVICE_NAME "vcom"
@@ -142,10 +153,14 @@
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 // #define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_USE_LFN" description="Support long file name" default="0">
-// <item description="LFN1">1</item>
-// <item description="LFN1">2</item>
+// <item description="Disable LFN feature.">0</item>
+// <item description="Enable LFN with static working buffer on the BSS. Always NOT reentrant.">1</item>
+// <item description="Enable LFN with dynamic working buffer on the STACK.">2</item>
+// <item description="Enable LFN with dynamic working buffer on the HEAP.">3</item>
 // </integer>
-#define RT_DFS_ELM_USE_LFN    1
+#define RT_DFS_ELM_USE_LFN    3
+// <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using code page file" default="true" />
+#define RT_DFS_ELM_CODE_PAGE_FILE
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
 #define RT_DFS_ELM_MAX_LFN    256
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
@@ -170,6 +185,8 @@
 #define RT_LWIP_TCP
 // <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
 #define RT_LWIP_DNS
+// <bool name="RT_LWIP_USING_RT_MEM" description="Enable RT-Thread memory management" default="true" />
+#define RT_LWIP_USING_RT_MEM
 // <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
 #define RT_LWIP_PBUF_NUM	4
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
@@ -189,22 +206,22 @@
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
 // <integer name="RT_LWIP_TCPTHREAD_STACKSIZE" description="the thread stack size of TCP thread" default="4096" />
-#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
+#define RT_LWIP_TCPTHREAD_STACKSIZE	1024
 // <integer name="RT_LWIP_ETHTHREAD_PRIORITY" description="the thread priority of ethnetif thread" default="144" />
 #define RT_LWIP_ETHTHREAD_PRIORITY	14
 // <integer name="RT_LWIP_ETHTHREAD_MBOX_SIZE" description="the mail box size of ethnetif thread to wait for" default="8" />
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
 // <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
-#define RT_LWIP_ETHTHREAD_STACKSIZE	512
+#define RT_LWIP_ETHTHREAD_STACKSIZE	2048
 // <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
 #define RT_LWIP_IPADDR0 192
 #define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 1
-#define RT_LWIP_IPADDR3 30
+#define RT_LWIP_IPADDR2 0
+#define RT_LWIP_IPADDR3 35
 // <ipaddr name="RT_LWIP_GWADDR" description="Gateway address of device" default="192.168.1.1" />
 #define RT_LWIP_GWADDR0 192
 #define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 1
+#define RT_LWIP_GWADDR2 0
 #define RT_LWIP_GWADDR3 1
 // <ipaddr name="RT_LWIP_MSKADDR" description="Mask address of device" default="255.255.255.0" />
 #define RT_LWIP_MSKADDR0 255

@@ -12,11 +12,11 @@
 // <item description="32">32</item>
 // <item description="256">256</item>
 // </integer>
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX    	32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND    		1000
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
-#define IDLE_THREAD_STACK_SIZE	512
+#define IDLE_THREAD_STACK_SIZE    	512
 // <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
 // #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
@@ -67,13 +67,24 @@
 
 // <section name="RT_USING_USB_DEVICE" description="USB Device stack" default="true" >
 #define RT_USING_USB_DEVICE
+// <bool name="RT_USB_DEVICE_COMPOSITE" description="Using USB composite device" default="true" />
+// #define RT_USB_DEVICE_COMPOSITE
+// <bool name="RT_USB_DEVICE_CDC" description="Using CDC serial device" default="true" />
+#define RT_USB_DEVICE_CDC
+// <bool name="RT_USB_DEVICE_MSTORAGE" description="Using USB mass storage device" default="true" />
+// #define RT_USB_DEVICE_MSTORAGE
+// <string name="RT_USB_MSTORAGE_DISK_NAME" description="Disk name used in mass storage class" default="sd0" />
+#define RT_USB_MSTORAGE_DISK_NAME   "sd0"
+// <integer name="RT_USB_MSTORAGE_BUFFER_SIZE" description="Buffer size used in mass storage class" default="8192" />
+#define RT_USB_MSTORAGE_BUFFER_SIZE 2048
 // </section>
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console output" default="vcom">
-// <item name="USB virtual serial">"vcom"</item>
+// <item name="USB virtual serial port">"vcom"</item>
+// <item name="UART0">"uart0"</item>
 // <item name="UART1">"uart1"</item>
 // </string>
 #define RT_CONSOLE_DEVICE_NAME "vcom"
@@ -89,7 +100,7 @@
 // <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
 #define FINSH_USING_DESCRIPTION
 // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
-#define FINSH_THREAD_STACK_SIZE	4096
+#define FINSH_THREAD_STACK_SIZE    4096
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
