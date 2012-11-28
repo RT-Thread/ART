@@ -482,6 +482,8 @@
     <unzip dest="windows/work/hardware/tools" src="windows/stm32-dfu.zip" overwrite="false"/>
     <!-- Unzip other tools -->
     <unzip dest="windows/work/hardware/tools" src="windows/bin.zip" overwrite="false"/>
+	<!-- Unzip firmware -->
+	<unzip dest="windows/work/hardware/" src="shared/firmware.zip" overwrite="false"/>
 	<!-- Copy ART platform -->
 	<mkdir dir="windows/work/hardware/ART" />
     <copy todir="windows/work/hardware/ART">
@@ -497,6 +499,7 @@
 
     <copy file="../../software/platform/rtthread.bin" tofile="windows/work/hardware/ART/rtthread.bin" overwrite="true" />
     <copy file="../../software/platform/rtthread_wifi.bin" tofile="windows/work/hardware/ART/rtthread_wifi.bin" overwrite="true" />
+    <copy file="../../software/platform/rtthread_lua.bin" tofile="windows/work/hardware/ART/rtthread_lua.bin" overwrite="true" />
 
 	<!-- Copy libraries -->
     <copy todir="windows/work">
