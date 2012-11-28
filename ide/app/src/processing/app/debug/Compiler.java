@@ -132,6 +132,7 @@ public class Compiler implements MessageConsumer {
 
 		sketch.setCompilingProgress(20);
 		List includePaths = new ArrayList();
+		List libraryPaths = new ArrayList();
 		includePaths.add(corePath);
 		if (platformPath != null)
 			includePaths.add(platformPath);
@@ -151,6 +152,7 @@ public class Compiler implements MessageConsumer {
 
 		for (File file : sketch.getImportedLibraries()) {
 			includePaths.add(file.getPath());
+			libraryPaths.add(file.getPath());
 		}
 
 		// 1. compile the sketch (already in the buildPath)
@@ -167,27 +169,30 @@ public class Compiler implements MessageConsumer {
 
 		sketch.setCompilingProgress(40);
 		for (File libraryFolder : sketch.getImportedLibraries()) {
+			List<File> libObjectFiles = new ArrayList<File>();
+			String libname = "lib" + libraryFolder.getName() + ".a";
 			File outputFolder = new File(buildPath, libraryFolder.getName());
-			File utilityFolder = new File(libraryFolder, "utility");
+			String buildLibraryName = outputFolder.getAbsolutePath() + File.separator + libname;
+			String runtimeLibraryName = libraryFolder.getAbsolutePath() + File.separator + libname;
+
 			createFolder(outputFolder);
-			// this library can use includes in its utility/ folder
-			includePaths.add(utilityFolder.getAbsolutePath());
-			objectFiles.addAll(compileFiles(toolchainBasePath,
+			libObjectFiles.addAll(compileFiles(toolchainBasePath,
 					outputFolder.getAbsolutePath(), includePaths,
 					findFilesInFolder(libraryFolder, "S", false),
 					findFilesInFolder(libraryFolder, "c", false),
 					findFilesInFolder(libraryFolder, "cpp", false),
 					boardPreferences));
-			outputFolder = new File(outputFolder, "utility");
-			createFolder(outputFolder);
-			objectFiles.addAll(compileFiles(toolchainBasePath,
-					outputFolder.getAbsolutePath(), includePaths,
-					findFilesInFolder(utilityFolder, "S", false),
-					findFilesInFolder(utilityFolder, "c", false),
-					findFilesInFolder(utilityFolder, "cpp", false),
-					boardPreferences));
-			// other libraries should not see this library's utility/ folder
-			includePaths.remove(includePaths.size() - 1);
+
+			List libBaseCommandAR = new ArrayList(Arrays.asList(new String[] {
+					toolchainBasePath + "arm-none-eabi-ar", "rcs",
+					buildLibraryName}));
+			for (File file : libObjectFiles) {
+				List commandAR = new ArrayList(libBaseCommandAR);
+				commandAR.add(file.getAbsolutePath());
+				execAsynchronously(commandAR);
+			}
+			// copy libcore.a to core path 
+			doCopy(buildLibraryName, runtimeLibraryName);
 		}
 
 		// 3. check whether the libcore.a exists, otherwise generate it. 
@@ -254,10 +259,11 @@ public class Compiler implements MessageConsumer {
 		// 4. link it all together into the .elf file
 		sketch.setCompilingProgress(60);
 		List baseCommandLinker = new ArrayList(Arrays.asList(new String[] {
-				toolchainBasePath + "arm-none-eabi-gcc", 
+				toolchainBasePath + "arm-none-eabi-g++", 
+				"-s", "-Os",  
 				"-o", buildPath + File.separator + this.primaryClassName + ".mo",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb", 
-				"-Wl,-z,max-page-size=0x4", "-shared",
+				"-Wl,--gc-sections,-z,max-page-size=0x4", "-shared",
 				"-fPIC", "-e", "main", "-nostdlib"}));
 
 		baseCommandLinker.add("-lstart");
@@ -269,8 +275,14 @@ public class Compiler implements MessageConsumer {
 		baseCommandLinker.add("-static");
 		baseCommandLinker.add("-lcore");
 		baseCommandLinker.add("-lm");
+		for (File file: sketch.getImportedLibraries()) {
+			baseCommandLinker.add("-l" + file.getName());
+		}
 		baseCommandLinker.add("-lend");
 		baseCommandLinker.add("-L" + libcorePath);
+		for (File file: sketch.getImportedLibraries()) {
+			baseCommandLinker.add("-L" + file.getAbsoluteFile());
+		}
 
 		execAsynchronously(baseCommandLinker);
 		sketch.setCompilingProgress(70);
@@ -282,9 +294,15 @@ public class Compiler implements MessageConsumer {
 				buildPath + File.separator + this.primaryClassName + ".mo" }));
 		execAsynchronously(baseCommandStrip);
 
+		/* 6. display size of output file */
+		List baseCommandSize = new ArrayList(Arrays.asList(new String[] {
+				toolchainBasePath + "arm-none-eabi-size", 
+				buildPath + File.separator + this.primaryClassName + ".mo" }));
+		execAsynchronously(baseCommandSize);
+
 		sketch.setCompilingProgress(80);
 
-		/* 6. copy to the root directory */
+		/* 7. copy to the root directory */
 		String rootfsPath = null;
 		File rootfsFolder = new File(corePath, "../../root");
 		try {
@@ -691,8 +709,8 @@ public class Compiler implements MessageConsumer {
 				"-O2", // optimized compiling
 				// show warnings if verbose 
 				Preferences.getBoolean("build.verbose") ? "-Wall" : "-w",
-				// "-ffunction-sections", // place each function in its own section
-				// "-fdata-sections",
+				"-ffunction-sections", // place each function in its own section
+				"-fdata-sections",
 				"-mcpu=" + boardPreferences.get("build.mcu"), "-mthumb",
 				"-mlong-calls", "-fPIC", "-fno-exceptions",
 				"-MMD", // output dependancy info

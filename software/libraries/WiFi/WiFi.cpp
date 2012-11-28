@@ -67,23 +67,19 @@ uint8_t* WiFiClass::macAddress(uint8_t* mac)
 
 IPAddress WiFiClass::localIP()
 {
-	IPAddress ret;
-
-    ret = Ethernet_localIP();
+	IPAddress ret(Ethernet_localIP());
 	return ret;
 }
 
 IPAddress WiFiClass::subnetMask()
 {
-	IPAddress ret;
-	ret = Ethernet_subnetMask();
+	IPAddress ret(Ethernet_subnetMask());
 	return ret;
 }
 
 IPAddress WiFiClass::gatewayIP()
 {
-	IPAddress ret;
-	ret = Ethernet_gatewayIP();
+	IPAddress ret(Ethernet_gatewayIP());
 	return ret;
 }
 

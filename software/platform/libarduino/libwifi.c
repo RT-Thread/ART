@@ -258,9 +258,7 @@ int wlan_begin_kernel(char* ssid, const char *passphrase)
 	rt_memset(bs_addr, 0xff, sizeof(bs_addr));
 	rt_device_control(dev, WLAN_CTRL_SET_BSADDR, bs_addr);
 
-	/* try WPA security */
-	security = WLAN_SECURITY_WPA;
-	rt_device_control(dev, WLAN_CTRL_SET_SECURITY, &security);
+	/* try to associate AP */
 	if (rt_wlan_associate(wlan) == RT_EOK)
 	{
 		/* associate successfully */
@@ -270,17 +268,8 @@ int wlan_begin_kernel(char* ssid, const char *passphrase)
 		return RT_EOK;
 	}
 
-	/* try WEP security */
-	security = WLAN_SECURITY_WEP;
-	rt_device_control(dev, WLAN_CTRL_SET_SECURITY, &security);
-	if (rt_wlan_associate(wlan) != RT_EOK)
-	{
-		return -RT_ERROR;
-	}
-	/* try to save setting */
-	_save_cfg(wlan);
-
-	return 0;
+	rt_kprintf("Can not associate AP.\n");
+	return -RT_ERROR;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(wlan_begin_kernel, wlan_begin, begin wlan network);
 

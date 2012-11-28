@@ -690,6 +690,19 @@ public class Editor extends JFrame implements RunnerListener {
       serialMenu = new JMenu(_("Serial Port"));
     populateSerialMenu();
     menu.add(serialMenu);
+
+    item = new JMenuItem(_("Show RootApp Folder"));
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          String path = Base.getHardwarePath() + File.separator + 
+        		  "ART" + File.separator + "root";
+          File folder = new File(path);
+          Base.openFolder(folder);
+        }
+      });
+    menu.add(item);
+    item.setEnabled(Base.openFolderAvailable());
+
     menu.addSeparator();
     
     JMenu programmerMenu = new JMenu(_("Programmer"));

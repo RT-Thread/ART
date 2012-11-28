@@ -48,6 +48,30 @@ void client_thread(void* parameter)
 	buf_ptr = (rt_uint8_t*) rt_malloc (BUF_SZ);
 	if (buf_ptr == RT_NULL) goto __exit;
 
+	/* try to stop application */
+	{
+		rt_module_t module;
+		char *name_ptr;
+		rt_uint32_t index;
+
+		name_ptr = fn_full;
+		for (index = 0; index < RT_NAME_MAX; index ++)
+		{
+			if (request->filename[index] == '\0' ||
+				request->filename[index] == '.') break;
+
+			*name_ptr = request->filename[index];
+			name_ptr ++;
+		}
+		if (index != RT_NAME_MAX) *name_ptr = '\0';
+
+		module = rt_module_find(fn_full);
+		if (module != RT_NULL)
+		{
+			rt_module_unload(module);
+		}
+	}
+	
 	rt_snprintf(fn_full, sizeof(fn_full), "%s/%s", FILE_PATH, request->filename);
 	rt_kprintf("\nWrite to file: %s\n", fn_full);
 
@@ -66,17 +90,27 @@ void client_thread(void* parameter)
 			write(fd, buf_ptr, recv_length);
 		}
 	}
+	else
+	{
+		rt_kprintf("Open failed.\n");
+	}
 
 __exit:
 	if (buf_ptr != RT_NULL) 
 		rt_free(buf_ptr);
-	if (request != RT_NULL)
-		rt_free(request);
 	if (fd >= 0)
 	{
 		rt_kprintf("\nDone.\n");
 		close(fd);
+
+		if (strstr(request->filename, ".mo") != RT_NULL)
+		{
+			/* try to start this application */
+			rt_module_open(fn_full);
+		}
 	}
+	if (request != RT_NULL)
+		rt_free(request);
 	
 	level = rt_hw_interrupt_disable();
 	client_session --;
@@ -154,7 +188,7 @@ void daemon_thread(void* parameter)
 					/* set client socket */
 					request->socket = client;
 					tid = rt_thread_create("client", client_thread, (void*) request, 
-						1024, 30, 10);
+						2048, 30, 10);
 					if (tid != RT_NULL)
 					{
 
