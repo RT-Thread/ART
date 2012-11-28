@@ -80,8 +80,8 @@ public class STM32DfuUploader extends Uploader {
 		int offset;
 		Map<String, String> boardPreferences = Base.getBoardPreferences();
 
-		System.out.println("Programmer: " + Preferences.get("programmer"));
-		System.out.println("Upload: " + boardPreferences.get("upload.addr"));
+		// System.out.println("Programmer: " + Preferences.get("programmer"));
+		// System.out.println("Upload: " + boardPreferences.get("upload.addr"));
 
 		/* remove .cpp or others in primaryClassName */
 		offset = className.indexOf('.');
@@ -120,7 +120,6 @@ public class STM32DfuUploader extends Uploader {
 			programmer = programmer.substring(programmer.indexOf(":") + 1);
 		}
 
-		System.out.println("burn bootloader");
 		return burnBootloader(getProgrammerCommands(target, programmer));
 	}
 
@@ -160,8 +159,13 @@ public class STM32DfuUploader extends Uploader {
 		base_path = Base.getTarget().getFolder().getAbsolutePath() + File.separator;
 		bootloader_path = base_path + boardPreferences.get("bootloader.file");
 
+		if (verbose){
+			System.out.println("burn firmware: " + bootloader_path);
+		}
+
 		try {
 			if ((new File(bootloader_path)).exists()) {
+				System.out.println("222");
 				params.add("-s");
 				params.add("0x08000000");
 				params.add("-D");
@@ -169,6 +173,8 @@ public class STM32DfuUploader extends Uploader {
 
 				return dfu(params);
 			}
+			System.err.println(bootloader_path
+					+ " is missing. Please choose ART board and try again!");
 		} catch (RunnerException e) {
 			System.err.println(bootloader_path
 					+ " is missing. Please choose ART board and try again!");
