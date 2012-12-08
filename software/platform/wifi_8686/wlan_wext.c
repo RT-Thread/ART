@@ -275,6 +275,18 @@ RTM_EXPORT(wlan_wpa_set_key);
 #define WPA_KEY_MGMT_PSK_SHA256 BIT(8)
 #define WPA_KEY_MGMT_WPS BIT(9)
 
+static int
+hexval(s32 chr)
+{
+    if (chr >= '0' && chr <= '9')
+        return chr - '0';
+    if (chr >= 'A' && chr <= 'F')
+        return chr - 'A' + 10;
+    if (chr >= 'a' && chr <= 'f')
+        return chr - 'a' + 10;
+    return 0;
+}
+
 void wlan_set_wpa_info(WlanConfig* config, WlanInfo * wlaninfo)
 {
 	WlanInfo *Wlan = wlaninfo;
@@ -289,7 +301,37 @@ void wlan_set_wpa_info(WlanConfig* config, WlanInfo * wlaninfo)
 
 	card->SecInfo.WEPStatus = Wlan802_11WEPDisabled;
 
-	if (config->security == WPA_PSK)
+	if (config->security == NoSecurity)
+    {
+        set_wep_no_key(card);
+    }
+	else if (config->security == WEP)
+    {
+		wep_key_set_Array keyArray;
+        int wep_passwd_str_len;
+        const char * tmp;
+        int i;
+
+        tmp = config->password;
+
+		rt_memset(&keyArray, 0x00, sizeof(keyArray));
+		keyArray.defaut_key_index = 0;
+
+		wep_passwd_str_len = strlen(config->password);
+		keyArray.KeyLength[0] = wep_passwd_str_len / 2;
+
+		for(i=0; i<wep_passwd_str_len; i+=2)
+        {
+            unsigned char hex;
+            hex = hexval(*tmp++);
+            hex <<= 4;
+            hex |= hexval(*tmp++);
+            rt_kprintf(" %02X", hex);
+            keyArray.Key_value[0][i/2] = hex;
+        }
+		set_wep_materials(card, &keyArray);
+    }
+	else if (config->security == WPA_PSK)
 	{
 		card->SecInfo.EncryptionMode = CIPHER_TKIP;
 		wlan_set_wpa_ie_helper(card, info_wpa, sizeof(info_wpa));
