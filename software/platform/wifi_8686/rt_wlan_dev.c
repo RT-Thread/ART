@@ -217,6 +217,7 @@ static rt_err_t mrvl_scan_card(struct rt_wlan_device* device, WlanConfig *config
 				item->MacAddress[5]);
 		rt_kprintf("Channel:%d ", item->Channel);
 		rt_kprintf("RSSI:0x%x ", item->Rssi);
+		rt_kprintf("Privacy:0x%x ", item->Privacy);
 		switch (item->Security)
 		{
 		case WEP:
@@ -240,6 +241,17 @@ static rt_err_t mrvl_scan_card(struct rt_wlan_device* device, WlanConfig *config
 			/* set bs address and channel */
 			config->channel = item->Channel;
 			config->security = item->Security;
+			if(item->Privacy == 0)
+            {
+                if(item->Security == WEP)
+                {
+                    config->security = NoSecurity;
+                }
+                else
+                {
+                    WlanDebug(WlanErr, "Privacy = 0 but Security != WEP\r\n");
+                }
+            }
 			
 			rt_memcpy(config->MacAddr, item->MacAddress, sizeof(item->MacAddress));
 			break;
