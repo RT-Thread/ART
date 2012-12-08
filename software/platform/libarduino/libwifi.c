@@ -36,9 +36,18 @@ static rt_err_t _save_cfg(struct rt_wlan_device * wlan)
 			"SSID=%s\n", wlan->ssid);
 		write(fd, line_buf, line_length);
 
+		if(wlan->security != 0)
+        {
 		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
 			"password=%s\n", wlan->password);
 		write(fd, line_buf, line_length);
+        }
+        else
+        {
+            line_length = rt_snprintf(line_buf, sizeof(line_buf),
+            "password=\n");
+            write(fd, line_buf, line_length);
+        }
 
 		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
 			"security=%d\n", wlan->security);
