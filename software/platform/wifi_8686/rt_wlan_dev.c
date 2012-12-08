@@ -291,7 +291,7 @@ static rt_err_t mrvl_wlan_associate(struct rt_wlan_device* device)
 	config->channel = device->channel;
 	/* copy SSID and base station address */
 	rt_strncpy(config->SSID, device->ssid, SSID_NAME_MAX);
-	rt_strncpy(config->MacAddr, device->bs_addr, MAC_LENGTH_MAX);
+	memcpy(config->MacAddr, device->bs_addr, MAC_LENGTH_MAX);
 	
 	if (device->password[0] == '\0') config->security = NoSecurity;
 	else 
