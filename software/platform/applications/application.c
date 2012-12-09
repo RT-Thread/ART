@@ -37,7 +37,7 @@ static void thread_entry(void* parameter)
 #ifdef RT_USING_DFS_ELMFAT
 		/* mount FAT file system on SD card */
         msd_init("sd0", "spi30");
-        if (dfs_mount("sd0", "/sd", "elm", 0, 0) == 0)
+        if (dfs_mount("sd0", "/SD", "elm", 0, 0) == 0)
         {
             rt_kprintf("SDCard File System initialized!\n");
         }
@@ -59,7 +59,7 @@ static void thread_entry(void* parameter)
 
     rt_usb_vcom_init();
 #endif
-    
+
 #ifdef RT_USING_USB_HOST
     /* register stm32 usb host controller driver */
     rt_hw_susb_init();
