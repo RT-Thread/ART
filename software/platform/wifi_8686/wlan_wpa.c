@@ -2,9 +2,7 @@
 #include "wlan_wpa.h"
 #include <dfs_posix.h>
 #include <rtm.h>
-
-#define FW_PATH         "/sd/firmware"
-#define WPA_BIN_FILE	FW_PATH"/wpa.mo"
+#include "wlan_8686_config.h"
 
 static const struct wlan_wpa_context* _ctx = RT_NULL;
 void wlan_wpa_context_register(const struct wlan_wpa_context* ctx)

@@ -18,7 +18,8 @@ Change log:
 
 #include	"include.h"
 #include	"wlan_debug.h"
-#define FW_PATH     "/sd/firmware"
+#include	"wlan_8686_config.h"
+
 /********************************************************
 		Local Variables
 ********************************************************/
