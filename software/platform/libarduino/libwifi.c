@@ -10,7 +10,7 @@
 #include <string.h>
 #include "service.h"
 
-#define WLAN_NVM_FILE	    "/sd/wlan.nvm"
+#define WLAN_NVM_FILE	    "/SD/wlan.nvm"
 #define WLAN_DEVICE_NAME    "w0"
 
 struct wlan_nvm
@@ -32,13 +32,13 @@ static rt_err_t _save_cfg(struct rt_wlan_device * wlan)
 	fd = open(WLAN_NVM_FILE, O_WRONLY | O_CREAT | O_TRUNC, 0);
 	if (fd >= 0)
 	{
-		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
+		line_length = rt_snprintf(line_buf, sizeof(line_buf),
 			"SSID=%s\n", wlan->ssid);
 		write(fd, line_buf, line_length);
 
 		if(wlan->security != 0)
         {
-		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
+		line_length = rt_snprintf(line_buf, sizeof(line_buf),
 			"password=%s\n", wlan->password);
 		write(fd, line_buf, line_length);
         }
@@ -49,22 +49,22 @@ static rt_err_t _save_cfg(struct rt_wlan_device * wlan)
             write(fd, line_buf, line_length);
         }
 
-		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
+		line_length = rt_snprintf(line_buf, sizeof(line_buf),
 			"security=%d\n", wlan->security);
 		write(fd, line_buf, line_length);
 
-		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
+		line_length = rt_snprintf(line_buf, sizeof(line_buf),
 			"channel=%d\n", wlan->channel);
 		write(fd, line_buf, line_length);
 
-		line_length = rt_snprintf(line_buf, sizeof(line_buf), 
-			"addr=%02x-%02x-%02x-%02x-%02x-%02x\n", 
-			wlan->bs_addr[0], wlan->bs_addr[1], wlan->bs_addr[2], 
+		line_length = rt_snprintf(line_buf, sizeof(line_buf),
+			"addr=%02x-%02x-%02x-%02x-%02x-%02x\n",
+			wlan->bs_addr[0], wlan->bs_addr[1], wlan->bs_addr[2],
 			wlan->bs_addr[3], wlan->bs_addr[4], wlan->bs_addr[5]);
 		write(fd, line_buf, line_length);
 
 		close(fd);
-	
+
 		return RT_EOK;
 	}
 
@@ -179,7 +179,7 @@ int wlan_system_init_kernel(void)
         rt_hw_spi1_init();
     }
 
-	mrvl_wlan_hw_init("spi10");	
+	mrvl_wlan_hw_init("spi10");
 	rt_kprintf("wlan initialized\n");
 
     if (rt_thread_find("tcpip") == RT_NULL)
@@ -212,7 +212,7 @@ int wlan_begin_kernel(char* ssid, const char *passphrase)
 {
 	rt_device_t dev;
 	struct rt_wlan_device * wlan;
-	rt_uint8_t mode, security, channel;
+	rt_uint8_t mode, channel;
 	rt_uint8_t bs_addr[6];
 	struct wlan_nvm wlan_cfg;
 
@@ -232,7 +232,7 @@ int wlan_begin_kernel(char* ssid, const char *passphrase)
 		rt_strcmp(passphrase, wlan_cfg.password) == 0)
 	{
 		int save_flag = 0;
-		
+
 		/* use the saved cfg to associate wifi network */
 		mode = WLAN_MODE_INFRA;
 		rt_device_control(dev, WLAN_CTRL_SET_MODE, &mode);
@@ -242,16 +242,16 @@ int wlan_begin_kernel(char* ssid, const char *passphrase)
 		rt_device_control(dev, WLAN_CTRL_SET_CHANNEL, &wlan_cfg.channel);
 		rt_device_control(dev, WLAN_CTRL_SET_SECURITY, &wlan_cfg.security);
 		if (wlan_cfg.channel == 0xff) save_flag = 1; /* set save flag */
-		
+
 		if (rt_wlan_associate(wlan) == RT_EOK)
 		{
 			/* associate successfully */
-		
+
 			if (save_flag) _save_cfg(wlan);
 			return RT_EOK;
 		}
 	}
-	
+
 	rt_device_control(dev, WLAN_CTRL_SET_SSID, ssid);
 	if (passphrase != RT_NULL)
 	{
@@ -273,7 +273,7 @@ int wlan_begin_kernel(char* ssid, const char *passphrase)
 		/* associate successfully */
 		/* try to save setting */
 		_save_cfg(wlan);
-		
+
 		return RT_EOK;
 	}
 
@@ -324,7 +324,7 @@ int wlan_begin_auto_kernel(void)
 	cfg.channel = 0xff;
 
 	/* read the configuration file */
-	if (_load_cfg(&cfg) != RT_EOK) 
+	if (_load_cfg(&cfg) != RT_EOK)
 	{
 		rt_kprintf("load wlan nvm failed.\n");
 		return -RT_ERROR;
@@ -332,8 +332,8 @@ int wlan_begin_auto_kernel(void)
 
 	rt_kprintf("wlan config: ssid: %s, channel: %d, security: %d\n",
 		cfg.ssid, cfg.channel, cfg.security);
-	rt_kprintf("addr=%02x-%02x-%02x-%02x-%02x-%02x\n", 
-		cfg.bs_addr[0], cfg.bs_addr[1], cfg.bs_addr[2], 
+	rt_kprintf("addr=%02x-%02x-%02x-%02x-%02x-%02x\n",
+		cfg.bs_addr[0], cfg.bs_addr[1], cfg.bs_addr[2],
 		cfg.bs_addr[3], cfg.bs_addr[4], cfg.bs_addr[5]);
 
 	mode = WLAN_MODE_INFRA;
@@ -396,7 +396,7 @@ char* wlan_SSID(void)
 
 	/* get wlan device */
 	wlan = (struct rt_wlan_device*) dev;
-    
+
     return wlan->ssid;
 }
 
