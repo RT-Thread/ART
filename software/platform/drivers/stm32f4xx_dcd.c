@@ -132,6 +132,8 @@ static rt_uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
         struct udev_msg msg;
 
         size = ((USB_OTG_CORE_HANDLE*)pdev)->dev.out_ep[epnum].xfer_count;
+        if (size > 64)
+            size = 64;
         msg.type = USB_MSG_DATA_NOTIFY;
         msg.dcd = &stm32_dcd;
         msg.content.ep_msg.ep_addr = epnum;
