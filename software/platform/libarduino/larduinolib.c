@@ -4,7 +4,7 @@
 
 #include "rtconfig.h"
 
-#if defined(RT_LUA_USE_ARDUINOLIB)
+#if defined(RT_USING_LUA) && defined(RT_LUA_USE_ARDUINOLIB)
 
 #include "lua.h"
 #include "lauxlib.h"
