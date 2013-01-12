@@ -1,5 +1,5 @@
 /**
- * USB device controller for RT-Thread RTOS
+ * USB device controller driver for RT-Thread RTOS
  *
  */
 #include <rtthread.h>
@@ -8,15 +8,10 @@
 #include "usb_core.h"
 #include "usb_dcd.h"
 #include "usb_dcd_int.h"
+#include "usbd_ioreq.h"
+#include "usb_bsp.h"
 
 #ifdef RT_USING_USB_DEVICE
-
-typedef enum
-{
-    USBD_OK   = 0,
-    USBD_BUSY,
-    USBD_FAIL,
-} USBD_Status;
 
 static struct udcd stm32_dcd;
 ALIGN(4) static USB_OTG_CORE_HANDLE USB_OTG_Core;
@@ -30,7 +25,6 @@ void OTG_FS_IRQHandler(void)
 
     USBD_OTG_ISR_Handler (&USB_OTG_Core);
 
-    /* leave interrupt */
     rt_interrupt_leave();
 }
 
@@ -132,8 +126,6 @@ static rt_uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
         struct udev_msg msg;
 
         size = ((USB_OTG_CORE_HANDLE*)pdev)->dev.out_ep[epnum].xfer_count;
-        if (size > 64)
-            size = 64;
         msg.type = USB_MSG_DATA_NOTIFY;
         msg.dcd = &stm32_dcd;
         msg.content.ep_msg.ep_addr = epnum;
@@ -167,8 +159,7 @@ static rt_uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
                                           ep->rem_data_len);
             }
             else
-            {
-                /* last packet is MPS multiple, so send ZLP packet */
+            {   /* last packet is MPS multiple, so send ZLP packet */
                 if((ep->total_data_len % ep->maxpacket == 0) &&
                         (ep->total_data_len >= ep->maxpacket) &&
                         (ep->total_data_len < ep->ctl_data_len ))
@@ -186,7 +177,6 @@ static rt_uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
     }
     else
     {
-        rt_uint16_t size;
         struct udev_msg msg;
 
         msg.type = USB_MSG_DATA_NOTIFY;
@@ -276,11 +266,13 @@ static rt_err_t set_address(rt_uint8_t address)
 static rt_err_t clear_feature(rt_uint8_t value)
 {
 
+    return RT_ERROR;
 }
 
 static rt_err_t set_feature(rt_uint8_t value)
 {
 
+    return RT_ERROR;
 }
 
 static rt_uint8_t ep_in_num = 1;
@@ -292,9 +284,17 @@ static rt_err_t ep_alloc(uep_t ep)
     RT_ASSERT(ep != RT_NULL);
 
     if(ep_desc->bEndpointAddress & USB_DIR_IN)
+    {
+        if (ep_in_num > 3)
+            return -RT_ERROR;
         ep_desc->bEndpointAddress |= ep_in_num++;
+    }
     else
+    {
+        if (ep_out_num > 3)
+            return -RT_ERROR;
         ep_desc->bEndpointAddress |= ep_out_num++;
+    }
 
     return RT_EOK;
 }
@@ -356,6 +356,13 @@ static rt_size_t ep_write(uep_t ep, void *buffer, rt_size_t size)
     return len;
 }
 
+static rt_err_t send_status(void)
+{
+    USBD_CtlSendStatus(&USB_OTG_Core);
+
+    return RT_EOK;
+}
+
 static struct udcd_ops stm32_dcd_ops =
 {
     set_address,
@@ -368,6 +375,7 @@ static struct udcd_ops stm32_dcd_ops =
     ep_stop,
     ep_read,
     ep_write,
+    send_status,
 };
 
 static rt_err_t stm32_dcd_init(rt_device_t device)
@@ -388,30 +396,10 @@ static rt_err_t stm32_dcd_init(rt_device_t device)
     return RT_EOK;
 }
 
-static rt_err_t stm32_dcd_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
-{
-    RT_ASSERT(dev != RT_NULL);
-
-    switch(cmd)
-    {
-    case CONTROL_SEND_STATUS:
-        USBD_CtlSendStatus(&USB_OTG_Core);
-        break;
-    case CONTROL_RECEIVE_STATUS:
-        USBD_CtlReceiveStatus(&USB_OTG_Core);
-        break;
-    default:
-        break;
-    }
-
-    return RT_EOK;
-}
-
 void rt_hw_usbd_init(void)
 {
     stm32_dcd.parent.type = RT_Device_Class_USBDevice;
     stm32_dcd.parent.init = stm32_dcd_init;
-    stm32_dcd.parent.control = stm32_dcd_control;
 
     stm32_dcd.ops = &stm32_dcd_ops;
     rt_completion_init(&stm32_dcd.completion);
