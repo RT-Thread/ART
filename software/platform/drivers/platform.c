@@ -198,8 +198,12 @@ void rt_hw_spi3_init(void)
     }
 }
 
+static struct rt_memheap _ccm;
 void rt_platform_init(void)
 {
+    /* add ccm heap */
+    rt_memheap_init(&_ccm, "ccm", (void*)0x10000000, 64 * 1024);
+
     rt_hw_spi1_init();
     rt_hw_spi2_init();
     rt_hw_spi3_init();
