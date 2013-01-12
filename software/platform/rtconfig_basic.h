@@ -29,15 +29,7 @@
 
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
 #define RT_USING_HOOK
-// <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
-#define RT_USING_TIMER_SOFT
-// <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
-#define RT_TIMER_THREAD_PRIO	4
-// <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
-#define RT_TIMER_THREAD_STACK_SIZE	512
-// <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
-#define RT_TIMER_TICK_PER_SECOND	200
-// </section>
+
 // <section name="IPC" description="Inter-Thread communication" default="always" >
 // <bool name="RT_USING_SEMAPHORE" description="Using semaphore in the system" default="true" />
 #define RT_USING_SEMAPHORE
@@ -58,6 +50,8 @@
 #define RT_USING_HEAP
 // <bool name="RT_USING_MEMHEAP" description="Using extra-dynamic heap management in the system" default="true" />
 #define RT_USING_MEMHEAP
+// <bool name="RT_USING_MEMHEAP_AS_HEAP" description="Using dynamic heap object as system default heap" default="true" />
+#define RT_USING_MEMHEAP_AS_HEAP
 // <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />
 #define RT_USING_SMALL_MEM
 // <bool name="RT_USING_SLAB" description="Using SLAB memory management for large memory" default="false" />

@@ -2489,30 +2489,6 @@ public class Editor extends JFrame implements RunnerListener {
       }});
   }
 
-  protected void handleBurnWiFiFirmware() {
-    console.clear();
-    statusNotice(_("Burning RT-Thread WiFi firmware to I/O Board (this may take a minute)..."));
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        try {
-          Uploader uploader = new ARTUploader();
-          if (uploader.burnBootloader()) {
-            statusNotice(_("Done burning firmware."));
-          } else {
-            statusError(_("Error while burning firmware."));
-            // error message will already be visible
-          }
-        } catch (RunnerException e) {
-          statusError(_("Error while burning firmware."));
-          e.printStackTrace();
-          //statusError(e);
-        } catch (Exception e) {
-          statusError(_("Error while burning firmware."));
-          e.printStackTrace();
-        }
-      }});
-  }
-
   /**
    * Handler for File &rarr; Page Setup.
    */
