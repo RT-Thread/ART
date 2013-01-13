@@ -145,7 +145,7 @@
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
 #define DFS_FD_MAX    4
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
-// #define RT_USING_DFS_ELMFAT
+#define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_USE_LFN" description="Support long file name" default="0">
 // <item description="Disable LFN feature.">0</item>
 // <item description="Enable LFN with static working buffer on the BSS. Always NOT reentrant.">1</item>
@@ -168,9 +168,9 @@
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
 // <bool name="RT_USING_WIFI" description="Enable WIFI network" default="false" />
-// #define RT_USING_WIFI
+#define RT_USING_WIFI
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
