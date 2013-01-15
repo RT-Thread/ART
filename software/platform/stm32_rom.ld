@@ -6,8 +6,9 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 512k /* 512k flash */
-    DATA (rw) : ORIGIN = 0x20000000, LENGTH = 128k /* 128K sram  */
+    FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 512k /* 512k flash */
+    CCM   (rw) : ORIGIN = 0x10000000, LENGTH = 64k  /* 64K sram  */
+    SRAM  (rw) : ORIGIN = 0x20000000, LENGTH = 128k /* 128K sram  */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -28,11 +29,11 @@ SECTIONS
         *(.glue_7t)
         *(.gnu.linkonce.t*)
 
-    /* section information for module symbol */
-    . = ALIGN(4);
-    __rtmsymtab_start = .;
-    KEEP(*(RTMSymTab))
-    __rtmsymtab_end = .;
+        /* section information for module symbol */
+        . = ALIGN(4);
+        __rtmsymtab_start = .;
+        KEEP(*(RTMSymTab))
+        __rtmsymtab_end = .;
         
         /* section information for finsh shell */
         . = ALIGN(4);
@@ -47,7 +48,7 @@ SECTIONS
 
         . = ALIGN(4);
         _etext = .;
-    } > CODE = 0
+    } > FLASH = 0
 
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
@@ -57,12 +58,12 @@ SECTIONS
 
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
-    } > CODE
+    } > FLASH
     __exidx_end = .;
 
     /* .data section which is used for initialized data */
 
-    .data : AT (_sidata)
+    .data :
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
@@ -75,14 +76,14 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >DATA
+    } >CCM AT > FLASH
 
     .stack : 
     {
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
-    } >DATA
+    } >CCM
 
     __bss_start = .;
     .bss :
@@ -100,10 +101,26 @@ SECTIONS
         _ebss = . ;
         
         *(.bss.init)
-    } > DATA
+    } > CCM
     __bss_end = .;
 
     _end = .;
+    
+    __sram_start = .;
+    .dma_buffer :
+    {
+        _dma_buffer_start = .;
+        *(dma_buffer)
+        _dma_buffer_end = .;
+    } > SRAM
+    
+    .ram_func :
+    {
+        _ram_func_start = .;
+        *(ram_func)
+        _ram_func_end = .;
+    } > SRAM AT > FLASH
+    __sram_available = .;
 
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }

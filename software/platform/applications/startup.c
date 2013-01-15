@@ -29,15 +29,16 @@
 extern int  rt_application_init(void);
 
 #ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define STM32_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+extern int Image$$RW_SRAM$$ZI$$Limit;
+#define HEAP_BEGIN    (&Image$$RW_SRAM$$ZI$$Limit)
 #elif __ICCARM__
-#pragma section="HEAP"
-#define STM32_SRAM_BEGIN    (__segment_end("HEAP"))
+#error IAR not support yet.
 #else
-extern int __bss_end;
-#define STM32_SRAM_BEGIN    (&__bss_end)
+extern int __sram_available;
+#define HEAP_BEGIN    (&__sram_available)
 #endif
+
+#define HEAP_END        STM32_SRAM_END
 
 /*******************************************************************************
 * Function Name  : assert_failed
@@ -69,7 +70,7 @@ void rtthread_startup(void)
 	rt_show_version();
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)STM32_SRAM_BEGIN, (void*)STM32_SRAM_END);
+    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
 #endif
 
 	/* initialize scheduler system */
