@@ -13,6 +13,7 @@ void rt_hw_spi1_init(void)
 {
     /* register SPI bus */
     static struct stm32_spi_bus stm32_spi;
+
     /* SPI1 configure */
     {
         GPIO_InitTypeDef GPIO_InitStructure;
@@ -203,4 +204,11 @@ void rt_platform_init(void)
     rt_hw_spi1_init();
     rt_hw_spi2_init();
     rt_hw_spi3_init();
+
+    /* initial all peripheral for arduino. */
+    {
+        void libarduino_init(void);
+
+        libarduino_init();
+    }
 }

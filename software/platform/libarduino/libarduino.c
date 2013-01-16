@@ -223,7 +223,7 @@ void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
 {
     static struct rt_timer timer2, timer3;
     rt_timer_t timer;
-    
+
     RT_ASSERT(frequency * 2 < UINT16_MAX);
     if(pin < 2 || pin > 3)
         return;
@@ -233,10 +233,10 @@ void tone(uint8_t pin, uint16_t frequency, unsigned long duration)
     }
     else if (pin == 3)
     {
-        timer = &timer3;    
+        timer = &timer3;
     }
     rt_timer_stop(timer);
-    rt_timer_init(timer, "pwmkill", 
+    rt_timer_init(timer, "pwmkill",
                   pwm_shutdown, (void*) pin,
                   rt_tick_from_millisecond(duration),
                   RT_TIMER_FLAG_ONE_SHOT);
@@ -259,3 +259,9 @@ RTM_EXPORT(analogWrite);
 RTM_EXPORT(analogRead);
 RTM_EXPORT(noTone);
 RTM_EXPORT(tone);
+
+void libarduino_init(void)
+{
+    /* Enable TIM6 clock for delayMicroseconds. */
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+}

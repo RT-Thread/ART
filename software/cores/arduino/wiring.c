@@ -50,33 +50,6 @@ void delay(unsigned long ms)
 	rt_thread_delay(tick);
 }
 
-/* Delay for the given number of microseconds.  Assumes a 8 or 16 MHz clock. */
-void delayMicroseconds(unsigned int us)
-{
-	rt_uint32_t ms;
-	rt_uint32_t us_delay;
-	rt_uint32_t us_current;
-
-	ms = us/1000;
-	us_delay = us % 1000;
-
-	if (ms)
-	{
-		delay(ms);
-	}
-
-	if (us_delay)
-	{
-		us_current = micros();
-		us_delay += us_current;
-
-		while (us_current < us_delay)
-		{
-			us_current = micros();
-		}
-	}
-}
-
 void init()
 {
 }
