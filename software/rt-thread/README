@@ -1,7 +1,0 @@
-Please put RT-Thread offical release under this folder.
-
-Use this command to check out the latest project source code from google code:
-    svn checkout http://rt-thread.googlecode.com/svn/trunk rt-thread
-    
-or download RT-Thread source code from:
-https://code.google.com/p/rt-thread/downloads/list
