@@ -15,7 +15,6 @@ ide/app/pde.jar
 ide/core/core.jar
 software/platform/build
 software/platform/project*
-software/rt-thread
 
 /software/cores/rtconfig.py
 /software/examples/rtconfig.py
