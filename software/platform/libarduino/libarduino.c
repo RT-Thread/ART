@@ -71,11 +71,23 @@ void pinMode(uint8_t pin, uint8_t mode)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
         GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     }
-    else
+    else if(mode == INPUT)
     {
-        /* input setting */
+        /* input setting: not pull. */
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+        GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    }
+    else if(mode == INPUT_PULLUP)
+    {
+        /* input setting: pull up. */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
         GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    }
+    else
+    {
+        /* input setting:default. */
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+        GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
     }
     GPIO_Init(index->gpio, &GPIO_InitStructure);
 }
