@@ -88,7 +88,7 @@ unsigned long pulseIn(uint8_t pin,
         rt_uint32_t dummy;
         rt_tick_t tick;
 
-        tick = rt_tick_from_millisecond(timeout);
+        tick = rt_tick_from_millisecond(timeout / 1000); // pulseIn us => ms.
 
         if (rt_event_recv(&pulsein_event,
                           (1 << pin),
