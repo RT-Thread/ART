@@ -314,13 +314,25 @@ typedef struct _MrvlIEtypes_WildCardSsIdParamSet_t
     u8 SsId[1];
 } MrvlIEtypes_WildCardSsIdParamSet_t;
 
+#ifndef PACK_STRUCT_STRUCT
+
+#if defined(__CC_ARM)                   /* ARMCC compiler */
+#   define  PACK_STRUCT_STRUCT      __attribute__ ((__packed__))
+#elif defined(__GNUC__)                 /* GNU GCC Compiler */
+#   define  PACK_STRUCT_STRUCT      __attribute__((packed))
+#elif defined(__IAR_SYSTEMS_ICC__)      /* IAR Compiler */
+#   define  PACK_STRUCT_STRUCT
+#endif /* compiler */
+
+#endif // PACK_STRUCT_STRUCT
+
 /** ChanScanMode_t */
 typedef struct
 {
     u8 PassiveScan:1;
     u8 DisableChanFilt:1;
     u8 Reserved_2_7:6;
-} ChanScanMode_t;
+} PACK_STRUCT_STRUCT ChanScanMode_t;
 
 /** ChanScanParamSet_t */
 typedef struct _ChanScanParamSet_t
@@ -330,7 +342,7 @@ typedef struct _ChanScanParamSet_t
     ChanScanMode_t ChanScanMode;
     u16 MinScanTime;
     u16 MaxScanTime;
-} ChanScanParamSet_t;
+} PACK_STRUCT_STRUCT ChanScanParamSet_t;
 
 /** MrvlIEtypes_ChanListParamSet_t */
 typedef struct _MrvlIEtypes_ChanListParamSet_t
